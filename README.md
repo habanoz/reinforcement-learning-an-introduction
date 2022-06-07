@@ -1,8 +1,7 @@
 # rl-study
 
-Personal Sutton & Barto code implementations.
+Personal Sutton & Barto exercise solutions.
 
-Reference implementations are from.
+Solutions are for personnel reference. No guarantee for correctness is provided. 
 
-https://github.com/ShangtongZhang/reinforcement-learning-an-introduction
-
+Corrections are welcome...
