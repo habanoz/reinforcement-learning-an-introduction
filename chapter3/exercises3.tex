@@ -189,10 +189,28 @@
 
     \subsection*{Answer}
 
-
     Equation $\sum_{k=0}^{\inf}ar^k$ is sum of geometric series which equals to $\frac{a}{1-r}$ if $r<1$.
 
     In equation (3.10) $a=1$ and $r = \gamma = 0.9$
 
+    \subsection{Question}
+
+    If the current state is St, and actions are selected according to stochastic policy pi, then what is the expectation of R t+1 in terms of pi and the four-argument function p(3.2)?
+
+    \subsection*{Answer}
+
+    \begin{equation}
+        E_{\pi}[R_{t+1}|S_{t}=s] = \sum_{a}^{} \pi(a|s) \sum_{s', r}^{} p(s',r|s, a) * r
+    \end{equation}
+
+    \subsection{Question}
+
+    Give an equation for $V_{pi}$ in terms of $q_\pi$ and $\pi$.
+
+        \subsection*{Answer}
+
+    \begin{equation}
+        v_{\pi}(s) = E_{\pi}[\sum_{a \in A(s)}^{} \pi(a|s)q_{\pi}(a,s)]
+    \end{equation}
 
 \end{document}
