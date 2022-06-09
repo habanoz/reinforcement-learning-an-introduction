@@ -7,7 +7,7 @@
 # Permission given to modify the code as long as you keep this        #
 # declaration at the top                                              #
 #######################################################################
-# Modified to include programming solution to exercise 2.5 Sutton&Barto 2nd edition.
+# Modified to include solution to programming exercises in Sutton&Barto 2018 edition.
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -274,6 +274,44 @@ def exercise_2_5_figure_e_2_5(runs=2000, time=10000):
     plt.close()
 
 
+def exercise_2_11_figure_e_2_11(runs=2000, time=1000):
+    labels = ['$\epsilon$-greedy sample avrg', '$\epsilon$-greedy $\\alpha=0.1$', '$\epsilon$-greedy $\\alpha=0.01$', 'gradient bandit',
+              'UCB', 'optimistic initialization']
+    generators = [lambda epsilon: Bandit(epsilon=epsilon, sample_averages=True, random_walk=True),
+                  lambda epsilon: Bandit(epsilon=epsilon, step_size=0.1, random_walk=True),
+                  lambda epsilon: Bandit(epsilon=epsilon, step_size=0.01, random_walk=True),
+                  lambda alpha: Bandit(gradient=True, step_size=alpha, gradient_baseline=True, random_walk=True),
+                  lambda coef: Bandit(epsilon=0, UCB_param=coef, sample_averages=True, random_walk=True),
+                  lambda initial: Bandit(epsilon=0, initial=initial, step_size=0.1, random_walk=True)]
+
+    parameters = [np.arange(-7, -1, dtype=np.float),
+                  np.arange(-7, -1, dtype=np.float),
+                  np.arange(-7, -1, dtype=np.float),
+                  np.arange(-5, 2, dtype=np.float),
+                  np.arange(-4, 3, dtype=np.float),
+                  np.arange(-2, 3, dtype=np.float)]
+
+    bandits = []
+    for generator, parameter in zip(generators, parameters):
+        for param in parameter:
+            bandits.append(generator(pow(2, param)))
+
+    _, average_rewards = simulate(runs, time, bandits)
+    rewards = np.mean(average_rewards, axis=1) # average_rewards[:, :, 100_000:]
+
+    i = 0
+    for label, parameter in zip(labels, parameters):
+        l = len(parameter)
+        plt.plot(parameter, rewards[i:i + l], label=label)
+        i += l
+    plt.xlabel('Parameter($2^x$)')
+    plt.ylabel('Average reward')
+    plt.legend()
+
+    plt.savefig('./images/figure_e_2_11.png')
+    plt.close()
+
+
 if __name__ == '__main__':
     # figure_2_1()
     # figure_2_2()
@@ -282,4 +320,5 @@ if __name__ == '__main__':
     # figure_2_5()
     # figure_2_6()
 
-    exercise_2_5_figure_e_2_5()
+    # exercise_2_5_figure_e_2_5()
+    exercise_2_11_figure_e_2_11()

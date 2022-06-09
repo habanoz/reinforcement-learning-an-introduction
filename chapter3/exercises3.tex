@@ -1,0 +1,155 @@
+%! Author = melek
+%! Date = 9.06.2022
+
+% Preamble
+\documentclass[11pt]{article}
+
+% Packages
+\usepackage{amsmath}
+
+% Document
+\begin{document}
+
+    \maketitle
+    \setcounter{section}{2}
+
+
+    \section{Exercises}
+
+    \subsection{Question}
+    Devise three example tasks of your own that fit into the MDP framework,
+    identifying for each its states, actions, and rewards. Make the three examples as di↵erent
+    from each other as possible. The framework is abstract and flexible and can be applied in
+    many di↵erent ways. Stretch its limits in some way in at least one of your examples
+
+    \subsection*{Answer}
+
+    \subsubsection*{Stock Trading}
+
+    An agent managing the given amount of cache in a stock.
+    The agent buys and sells in order to maximize the cache it is given.
+
+    \textbf{States}: Cache amount, stock amount, buy/sell prices, market indicators, global indices (e.g. risk index)
+
+    \textbf{Actions}: Buy, Sell, Do nothing
+
+    \textbf{Rewards}: Cache amount deviation from the initial amount.
+
+    \subsubsection*{Landing an UAV}
+
+    An agent that can land an UAV in any weather conditions.
+    The agent locates the landing point, considers the distance and the altitude, and controls engine thrust and control planes to the land the aircraft.
+
+    \textbf{States}: Distance to the landing point, altitude, azimuth, velocity, wind info, engine thrust etc.
+
+    \textbf{Actions}: Increase/Decrease elevation, change heading, change engine thrust, control landing gears.
+
+    \textbf{Rewards}: Positive reward upon landing, possibly increasing with proportionally to proximity to desired landing location.
+    A very low reward upon crash.
+
+    \subsubsection*{Playing ATARI Games}
+
+    An agent that can play atari games by looking at screen pixel images.
+
+    \textbf{States}: Screen pixels.
+
+    \textbf{Actions}: Game controls, e.g. left, right, shoot
+
+    \textbf{Rewards}: Positive reward upon winning.
+    Negative reward upon loosing.
+
+    \subsection{Question}
+    Is the MDP framework adequate to usefully represent all goal-directed learning tasks?
+    Can you think of any clear exceptions?
+
+    \subsection*{Answer}
+    Agent needs to learn the reward at the end of the episode.
+    If the environment does not provide a reward or does provide a vector of rewards the agent cannot learn.
+
+    \subsection{Question}
+    Consider the problem of driving.
+    You could define the actions in terms of the accelerator, steering wheel, and brake, that is, where your body meets the machine.
+    Or you could define them farther out—say, where the rubber meets the road, considering your actions to be tire torques.
+    Or you could define them farther in—say, where your brain meets your body, the actions being muscle twitches to control your limbs.
+    Or you could go to a really high level and say that your actions are your choices of where to drive.
+    What is the right level, the right place to draw the line between agent and environment?
+    On what basis is one location of the line to be preferred over another?
+    Is there any fundamental reason for preferring one location over another, or is it a free choice?
+
+    \subsection*{Answer}
+    It depends on the problem we are trying to solve.
+
+    Car driving is designed to be a function of acceleration, steering wheel and the brake.
+    This interface is already present in any car.
+    Natural approach would be to exploit that interface.
+
+    Now let's consider using a lower level control and use brain signals.
+    In order to drive the brain process and produces many signals.
+    Much of the processed signals are even may not always be related to the driving.
+    Produced signals are do not directly control the car but the body.
+    More work is needed to translate the signals.
+    The brain level control introduces a lot of extra work.
+
+    Now let's move to a higher level and use choices of locations as actions.
+    In this case it will be necessary to relate all the locations, road conditions e.g. pedestrians, lights, and car state e.g. turning, acceleration which produces an infinite MDP.
+    It is very hard to learn in this setting.
+
+    \subsection{Question}
+
+    Give a table analogous to that in Example 3.3, but for p(s', r |s, a).
+    It should have columns for s, a, s 0 , r, and p(s', r| s, a), and a row for every 4-tuple for which p(s 0 , r |s, a) > 0
+
+    \subsection*{Answer}
+
+    Rewards are deterministic. p(s', r |s, a) column will be similar to p(s'|s, a) column.
+    Answer will be similar to the table in example 3.3 excluding rows with 0 probability.
+
+    \subsection{Question}
+
+    The equations in Section 3.1 are for the continuing case and need to be modified (very slightly) to apply to episodic tasks.
+    Show that you know the modifications needed by giving the modified version of (3.3).
+
+    \subsection*{Answer}
+
+    \begin{equation}
+        \sum_{s' \in S^+}^{} \sum_{r \in R}^{} p(s', r | s, a) = 1 \text{ for all } s \in S, a \in A(s), S^+ \text{being all states, } S \text{ being non-terminal states}.
+    \end{equation}
+
+    \subsection{Question}
+
+    Suppose you treated pole-balancing as an episodic task but also used discounting, with all rewards zero except for 1 upon failure.
+    What then would the return be at each time?
+    How does this return differ from that in the discounted, continuing formulation of this task?
+
+    \subsection*{Answer}
+
+    Similar to the continuing case, the return will be related to $-\gama^K$.
+
+    The difference is that in continuing case the return will keep accumulating.
+
+    \subsection{Question}
+
+    Imagine that you are designing a robot to run a maze.
+    You decide to give it a reward of +1 for escaping from the maze and a reward of zero at all other times.
+    The task seems to break down naturally into episodes—the successive runs through the maze—so you decide to treat it as an episodic task, where the goal is to maximize expected total reward (3.7).
+    After running the learning agent for a while, you find that it is showing no improvement in escaping from the maze.
+    What is going wrong?
+    Have you effectively communicated to the agent what you want it to achieve?
+
+    \subsection*{Answer}
+
+    The robot should be incentivized to exit the maze as soon as possible.
+
+    \subsection{Question}
+
+    Suppose = $\gamma=0.5$0 and the following sequence of rewards is received R1 = -1, R2 = 2, R3 = 6, R4 = 3, and R5 = 2, with T = 5.
+    What are G0, G1,\ldots, G5 ?
+    Hint: Work backwards.
+
+    \subsection*{Answer}
+
+    \begin{equation}
+        G_t = R_{t+1} + \gamma G_{t+1}
+    \end{equation}
+
+\end{document}
