@@ -142,7 +142,7 @@
 
     \subsection{Question}
 
-    Suppose = $\gamma=0.5$0 and the following sequence of rewards is received R1 = -1, R2 = 2, R3 = 6, R4 = 3, and R5 = 2, with T = 5.
+    Suppose $\gamma=0.5$0 and the following sequence of rewards is received R1 = -1, R2 = 2, R3 = 6, R4 = 3, and R5 = 2, with T = 5.
     What are G0, G1,\ldots, G5 ?
     Hint: Work backwards.
 
@@ -151,5 +151,48 @@
     \begin{equation}
         G_t = R_{t+1} + \gamma G_{t+1}
     \end{equation}
+
+    $G_5 = 0$
+
+    $G_4 = R_{5} + \gamma G_{5} = 2 + 0.5 * 0 = 2 $
+
+    $G_3 = R_{4} + \gamma G_{4} = 3 + 0.5 * 2 = 4 $
+
+    $G_2 = R_{3} + \gamma G_{3} = 6 + 0.5 * 4 = 8 $
+
+    $G_1 = R_{2} + \gamma G_{2} = 2 + 0.5 * 8 = 6 $
+
+    $G_0 = R_{1} + \gamma G_{1} = -1 + 0.5 * 6 = 2 $
+
+    \subsection{Question}
+
+    Suppose $\gamma= 0.9$ and the reward sequence is R1 = 2 followed by an infinite sequence of 7s.
+    What are G1 and G0 ?
+
+    \subsection*{Answer}
+
+    \begin{equation}
+        G_t = R_{t+1} + \gamma G_{t+1}
+    \end{equation}
+
+    \begin{equation}
+        G_t = \sum_{k=0}^{\in} \gamma ^ k = \frac{1}{1-\gamma} \text{ given } \gamma < 1
+    \end{equation}
+
+    $G_1 = 7 * \frac{1}{1-0.9} = 70 $
+
+    $G_0 = R_{1} + \gamma G_{1} = 2 + 0.9 * 70 = 65 $
+
+    \subsection{Question}
+
+    Prove the second equality in (3.10).
+
+    \subsection*{Answer}
+
+
+    Equation $\sum_{k=0}^{\inf}ar^k$ is sum of geometric series which equals to $\frac{a}{1-r}$ if $r<1$.
+
+    In equation (3.10) $a=1$ and $r = \gamma = 0.9$
+
 
 \end{document}
