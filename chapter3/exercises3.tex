@@ -319,13 +319,26 @@
 
     \subsection*{Answer}
 
+    It is optimal to use putter inside the green region, elsewhere driver is the optimal club.
 
+    State value for the green region is -1;
+    State value for the contour where green region can be reached in one shot using a driver is -2;
+    State value for the contour where region with state value -2 can be reached in one shot using a driver is -3;
 
     \subsection{Question}
 
-    Draw or describe the contours of the optimal action-value function for putting, q* (s, putter), for the golf example.
+    Draw or describe the contours of the optimal action-value function for putting, q*(s, putter), for the golf example.
 
     \subsection*{Answer}
+
+    Action value for the putter inside the green region is -1;
+    Action value for the putter for the contour where green region can be reached in one shot using a putter is -2;
+    Action value for the putter for the outer contour 1 is -3 because after first putter two more shots are needed in any case.
+    Action value for the putter for the outer contour 2 is -3 because after first putter using one driver and one putter may be optimal.
+    As we go out regions will be larger than first two regions.
+    Overall, since using putter outside green region is sub-optimal, action values will be lower compared to q*(s, driver) illustrated in the book.
+
+
 
 
 \end{document}
