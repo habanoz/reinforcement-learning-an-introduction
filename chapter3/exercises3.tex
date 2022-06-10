@@ -207,10 +207,125 @@
 
     Give an equation for $V_{pi}$ in terms of $q_\pi$ and $\pi$.
 
-        \subsection*{Answer}
+    \subsection*{Answer}
 
     \begin{equation}
         v_{\pi}(s) = E_{\pi}[\sum_{a \in A(s)}^{} \pi(a|s)q_{\pi}(a,s)]
     \end{equation}
+
+    \subsection{Question}
+
+    Give an equation for $q_{pi}$ in terms of $v_{pi}$ and the four-argument p.
+
+    \subsection*{Answer}
+
+    \begin{equation}
+        q_{\pi}(s, a) = \sum_{s',r}^{} p(s', r | s, a) [v_{\pi}(s')*\gamma + r ]
+    \end{equation}
+
+    \subsection{Question}
+
+    The Bellman equation (3.14) must hold for each state for the value function $v_{pi}$ shown in Figure 3.2 (right) of Example 3.5.
+    Show numerically that this equation holds for the center state, valued at +0.7, with respect to its four neighboring states, valued at +2.3, +0.4, 0.4, and +0.7.
+    (These numbers are accurate only to one decimal place.)
+
+    \subsection*{Answer}
+
+    \begin{equation}
+        v_{\pi}(s_{center}) = 0.25 * 0.9 ( 2.7 + 0.3 + 0.4 -0.4 ) = 0.675 \approx 0.7
+    \end{equation}
+
+    \subsection{Question}
+
+    In the gridworld example, rewards are positive for goals, negative for running into the edge of the world, and zero the rest of the time.
+    Are the signs of these rewards important, or only the intervals between them?
+    Prove, using (3.8), that adding a constant c to all the rewards adds a constant, v c , to the values of all states, and thus does not a↵ect the relative values of any states under any policies.
+    What is v c in terms of c and ?
+
+    \subsection*{Answer}
+
+    \begin{equation}
+        G_{t} = \sum_{k=0}^{\infty} \gamma^{k} R_{t+k+1}
+    \end{equation}
+
+    Adding constant c:
+
+    \begin{equation}
+        G'_{t} = \sum_{k=0}^{\infty} \gamma^{k} (R_{t+k+1} + c) = \sum_{k=0}^{\infty} \gamma^{k} R_{t+k+1} + \gamma^{k} c = G_{t} +  \sum_{k=0}^{\infty} \gamma^{k} c
+    \end{equation}
+
+    \begin{equation}
+        G'_{t} =  G_{t} + \frac{c}{1-\gamma}
+    \end{equation}
+
+    Showing $v'$ in terms of c and $\gamma$
+
+    \begin{equation}
+        v'(s) =  E[G'_{t}|S_{t}=s] = E[G_{t} + \frac{c}{1-\gamma}|S_{t}=s] = E[G_{t}|S_{t}=s] + \frac{c}{1-\gamma} = v(s) + \frac{c}{1-\gamma}
+    \end{equation}
+
+    \subsection{Question}
+
+    Now consider adding a constant c to all the rewards in an episodic task, such as maze running.
+    Would this have any effect, or would it leave the task unchanged as in the continuing task above?
+    Why or why not?
+    Give an example.
+
+    \subsection*{Answer}
+
+    In an episodic task adding a constant may change the behaviour.
+    If c is big enough it may assign a positive reward to taking time in the maze which makes the agent prefer not to exit the maze.
+
+    \subsection{Question}
+
+    What is the Bellman equation for action values, that is, for $q_\pi$ ?
+    It must give the action value $q\pi(s, a)$ in terms of the action values, $q\pi(s', a')$, of possible successors to the state–action pair (s, a).
+    Hint: the backup diagram to the right corresponds to this equation.
+    Show the sequence of equations analogous to (3.14), but for action values.
+
+    \subsection*{Answer}
+
+    $q(s, a) =  E_{\pi}[G_{t}|S_{t}=s, A_{t}=a] = E_{\pi}[R_{t+1} + \gamma G_{t+1}|S_{t}=s, A_{t}=a]$
+
+    $q(s, a) =  \sum_{s',r} p(s',r | s, a) [r + \gamma \sum_{a' \in A(s')} \pi(a'|s')q(s', a') ] $
+
+    \subsection{Question}
+
+    The value of a state depends on the values of the actions possible in that state and on how likely each action is to be taken under the current policy.
+    We can think of this in terms of a small backup diagram rooted at the state and considering each possible action.
+    Give the equation corresponding to this intuition and diagram for the value at the root node, v pi (s), in terms of the value at the expected leaf node, q pi (s, a), given St = s.
+
+    \subsection*{Answer}
+
+    $v_{\pi}(s) = E_{\pi}[G_{t}|S_{t}=s] = E_{\pi}[q_{\pi}(s,a)|S_{t}=s, a \in A(s)] $
+
+    $v_{\pi}(s) = \sum_{a \in A(s)} \pi(s, a) q_{\pi}(s,a) $
+
+    \subsection{Question}
+
+    The value of an action, q pi (s, a), depends on the expected next reward and the expected sum of the remaining rewards.
+    Again we can think of this in terms of a small backup diagram, this one rooted at an action (state–action pair) and branching to the possible next states.
+    Give the equation corresponding to this intuition and diagram for the action value, q pi (s, a), in terms of the expected next reward, R t+1 , and the expected next state value, v pi (S t+1 ), given that S t = s and A t = a.
+
+    \subsection*{Answer}
+
+    $ q_{\pi}(s, a) = E[G_{t}|S_{t}=s, A_{t}=a] = E[R_{t+1} + \gamma v_{\pi}(s') |S_{t}=s, A_{t}=a, s' \in A(s)] $
+
+    $ q_{\pi}(s, a) = \sum_{s',r} p(s', r | s, a) [r + \gamma v_{\pi}(s')] $
+
+    \subsection{Question}
+
+    Draw or describe the optimal state-value function for the golf example.
+
+    \subsection*{Answer}
+
+
+
+    \subsection{Question}
+
+    Draw or describe the contours of the optimal action-value function for putting, q* (s, putter), for the golf example.
+
+    \subsection*{Answer}
+
 
 \end{document}
