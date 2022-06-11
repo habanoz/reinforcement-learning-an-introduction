@@ -6,6 +6,7 @@
 
 % Packages
 \usepackage{amsmath}
+\DeclareMathOperator*{\argmax}{argmax}
 
 % Document
 \begin{document}
@@ -338,7 +339,187 @@
     As we go out regions will be larger than first two regions.
     Overall, since using putter outside green region is sub-optimal, action values will be lower compared to q*(s, driver) illustrated in the book.
 
+    \subsection{Question}
+
+    Consider the continuing MDP shown on to the right.
+    The only decision to be made is that in the top state, where two actions are available, left and right.
+    The numbers show the rewards that are received deterministically after each action.
+    There are exactly two deterministic policies, policy left and policy right .
+    What policy is optimal if $\gamma = 0$? If = $\gamma = 0.9$? If $\gamma = 0.5$?
+
+    \subsection*{Answer}
+
+    $ v_{\pi}(s_{0}) = E_{\pi}[G_{0}] =  E_{\pi}[R_{1} + \gamma G_{1}] $
+
+    $ v_{\pi}(s_{top}) = \sum_{k=0} \gamma^{2^{k}}a + \sum_{k=0} \gamma^{2^{k}}\gamma*b $
+
+    $ v_{\pi}(s_{top}) = \frac{a}{1-\gamma^{2}} + \frac{\gamma * b}{1-\gamma^{2}} $
+
+    $ \text{let } d = \frac{1}{1-\gamma^{2}} $
+
+    $ v_{left}(s_{top}) = \frac{1}{1-\gamma^{2}} + \frac{\gamma * 0}{1-\gamma^{2}} = \frac{1}{1-\gamma^{2}} = d $
+
+    $ v_{right}(s_{top}) = \frac{0}{1-\gamma^{2}} + \frac{\gamma * 2}{1-\gamma^{2}} = \frac{\gamma * 2}{1-\gamma^{2}} = 2 \gamma d $
+
+    \subsubsection*{Case $\gamma=0$}
+
+    $ v_{left}(s_{top} | \gamma=0) = d $
+    $ v_{right}(s_{top} | \gamma=0) = 0 $
+
+    Optimal action is left.
 
 
+    \subsubsection*{Case $\gamma=0.5$}
+
+    $ v_{left}(s_{top} | \gamma=0.5) = d $
+    $ v_{right}(s_{top} | \gamma=0.5) = d $
+
+    Optimal action is left or right.
+
+    \subsubsection*{Case $\gamma=0.9$}
+
+    $ v_{left}(s_{top} | \gamma=0.9) = d $
+    $ v_{right}(s_{top} | \gamma=0.9) = 1.8d =  $
+
+    Optimal action is right.
+
+    \subsection{Question}
+
+    Give the Bellman equation for q* for the recycling robot.
+
+    \subsection*{Answer}
+
+    $ q_{*}(s, a) = E[R + \max_{a'} q(s',a') ] $
+
+    $ q(h, s) = \alpha [r_{search} + \max_{a'} q(h,a')] + (1-\alpha) [r_{search} + \max_{a'} q(l,a') ]  $
+
+    $ q(l, s) = \beta [r_{search} + \max_{a'} q(l,a')] + (1-\beta) [-3 + \max_{a'} q(h,a') ]  $
+
+    $ q(h, w) = r_{wait} + \max_{a'} q(h,a') $
+
+    $ q(l, w) = r_{wait} + \max_{a'} q(l,a') $
+
+    $ q(l, w) = \max_{a'} q(h,a') $
+
+    \subsection{Question}
+
+    Figure 3.5 gives the optimal value of the best state of the gridworld as 24.4, to one decimal place.
+    Use your knowledge of the optimal policy and (3.8) to express this value symbolically, and then to compute it to three decimal places.
+
+    \subsection*{Answer}
+
+    $G_{t} = \sum_{k=0} \gamma ^ {k} R_{t+k+1} $
+
+    Optimal policy is to go from A' to A.
+
+    $V_{*}(A) = 10 + \gamma*0 + \gamma^{2}*0 + \gamma^{3}*0 + \gamma^{4}*0 + \dots $
+
+    $V_{*}(A) = \sum_{k=0} \gamma^{5k} (10 + \gamma*0 + \gamma^{2}*0 + \gamma^{3}*0 + \gamma^{4}*0) = \sum_{k=0} \gamma^{5k} 10 = \frac{10}{1-\gamma^5}$
+
+    $V_{*}(A) = \frac{10}{1-0.9^5} = 24.419 $
+
+    \subsection{Question}
+
+    Give an equation for v* in terms of q*.
+
+    \subsection*{Answer}
+
+    $ v_{*}(s) = \max_{a} q_{*}(s,a) $
+
+    \subsection{Question}
+
+    Give an equation for q* in terms of v* and the four-argument p.
+
+    \subsection*{Answer}
+
+    $ q_{*}(s, a) = \sum_{s', r} p(s', r | s, a) ( r + \gamma v*(s') ) $
+
+    \subsection{Question}
+
+    Give an equation for $ \pi_{*} $ in terms of $ q_* $ .
+
+    \subsection*{Answer}
+
+    \begin{equation}
+        \pi_*(a|s) =
+        \begin{cases}
+            1,& \text{ if } a = \argmax_{a'}q_{*}(a'|s) \\
+            0,& \text{ else }
+        \end{cases}
+    \end{equation}
+
+    \subsection{Question}
+
+    Give an equation for pi* in terms of v* and the four-argument p.
+
+    \subsection*{Answer}
+
+    \begin{equation}
+        \pi_*(a|s) =
+        \begin{cases}
+            1,& \text{ if } a = \argmax_{a'} \sum_{r,s'} p(r, s'| a', s)(r + \gamma v_*(s')) \\
+            0,& \text{ else }
+        \end{cases}
+    \end{equation}
+
+    \subsection{Question}
+
+    Rewrite the four Bellman equations for the four value functions $ (v_\pi ,v_* , q_\pi \text{ and } q_* ) $ in terms of the three argument function p (3.4) and the two-argument function r (3.5).
+
+    \subsection*{Answer}
+
+    \begin{equation}
+        G_t = R_{t+1} + \gamma G_{t+1}
+    \end{equation}
+
+    \begin{equation}
+        p(s'|s,a) = Pr\{S_t=s'|S_{t-1}=s, A_{t-1}=a\} = \sum_{r \in R} p(s', r | s, a)
+    \end{equation}
+
+    \begin{equation}
+        r(s,a) = E [R_t |S_{t-1}=s, A_{t-1}=a ] = \sum_{r \in R, s' \in S} p(s', r | s, a) * r
+    \end{equation}
+
+    \begin{equation}
+        v_*(s) = \max_{a} \sum_{s',r} p(s',r| s, a) [r+\gamma v_*(s')]
+    \end{equation}
+
+     \begin{equation}
+        q_*(s, a) = \sum_{s',r} p(s',r| s, a) [r+\gamma \max_{a'} q_*(s',a')]
+    \end{equation}
+
+    \subsubsection*{Derivations}
+
+    \begin{equation}
+        \begin{split}
+            v_{\pi} (s) = E_{\pi} [G_t | S_t = s] = E_{\pi} [ R_{t+1} + \gamma G_{t+1} | S_t = s] \\
+            v_{\pi} (s) = \sum_{a} \pi(a|s) \sum_{s',r} p(s',r|s,a) [r+\gamma v_\pi(s')] \\
+            v_{\pi} (s) = \sum_{a} \pi(a|s) [\sum_{s',r} p(s',r|s,a) r + \sum_{s'}\sum_{r} p(s',r|s,a) \gamma v_\pi(s')] \\
+            v_{\pi} (s) = \sum_{a} \pi(a|s) [r(s,a) + \sum_{s'} p(s'|s,a) \gamma v_\pi(s')] \\
+        \end{split}
+    \end{equation}
+
+    \begin{equation}
+        \begin{split}
+            q_{\pi} (s, a) = E_{\pi} [G_t | S_t = s, A_t = a] = E_{\pi} [ R_{t+1} + \gamma G_{t+1} | S_t = s , A_t = a] \\
+            q_{\pi} (s, a) = \sum_{s',r} p(s',r|s,a) [r+\gamma v_\pi(s')] \\
+            q_{\pi} (s, a) = \sum_{s',r} p(s',r|s,a) r + \sum_{s'}\sum_{r} p(s',r|s,a) \gamma v_\pi(s') \\
+            q_{\pi} (s, a) = \sum_{a} \pi(a|s) [r(s,a) + \sum_{s'} p(s'|s,a) \gamma v_\pi(s') \\
+        \end{split}
+    \end{equation}
+
+    \begin{equation}
+        \begin{split}
+            v_* (s) = \max_{a} [\sum_{s',r} p(s',r| s, a) r+ \sum_{s'} \sum_{r} p(s',r| s, a) \gamma v_*(s')] \\
+            v_* (s) = \max_{a} [ r(s,a) +  \sum_{s'} p(s'| s, a) \gamma v_*(s') ]
+        \end{split}
+    \end{equation}
+
+    \begin{equation}
+        \begin{split}
+            q_* (s, a) =  \sum_{s',r} p(s',r| s, a) * r+ \sum_{s'} \sum_{r} p(s',r| s, a) * \gamma \max_{a'} q_*(s',a') \\
+            v_* (s) = r(s, a) + \sum_{s'} p(s'| s, a) * \gamma \max_{a'} q_*(s',a')
+        \end{split}
+    \end{equation}
 
 \end{document}
