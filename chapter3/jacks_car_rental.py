@@ -2,10 +2,11 @@ import time
 import numpy as np
 from scipy.stats import poisson
 
-LOC2_EXPECTED_RETURN = 4
-LOC2_EXPECTED_REQUEST = 2
+LOC2_EXPECTED_RETURN = 2
+LOC2_EXPECTED_REQUEST = 4
 LOC1_EXPECTED_RETURN = 3
 LOC1_EXPECTED_REQUEST = 3
+MAX_EXPECTED_UPDATE = 11
 
 CAR_MOVE_COST = 2
 RENT_PRICE = 10
@@ -39,34 +40,30 @@ class ProbableUpdate:
         self.pret2 = pret2
 
 
-def step(action, updates, state):
+def step(action, s, V):
     """
     :param action: negative values for moving to location 1
-    :param updates tuple (req1, req2, ret1, ret2)
-    :param state: current state, not modidified
+    :param u tuple (req1, req2, ret1, ret2)
+    :param s: current state, not modified
     :return: tuple of new state and reward
     """
 
-    rented = 0
-    nLoc1 = state.nLoc1
-    nLoc2 = state.nLoc2
+    action_return = -abs(action) * CAR_MOVE_COST
 
-    req1, req2, ret1, ret2 = updates.req1, updates.req2, updates.ret1, updates.ret2
+    nLoc1 = s.nLoc1 - action
+    nLoc2 = s.nLoc2 + action
 
-    rented += min(nLoc1, req1)
-    rented += min(nLoc2, req2)
+    for u in states_updates(nLoc1, nLoc2):
+        req1, req2, ret1, ret2 = min(u.req1, nLoc1), min(u.req2, nLoc2), u.ret1, u.ret2
+        prob = u.preq1 * u.preq2 * u.pret1 * u.pret2
 
-    nLoc1 -= req1
-    nLoc2 -= req2
+        spNLoc1 = min(nLoc1 - req1 + ret1, MAX_CARS)
+        spNLoc2 = min(nLoc2 - req2 + ret2, MAX_CARS)
 
-    if nLoc1 < 0 or nLoc2 < 0:
-        return (State(-1, -1, True), 0)
+        reward = (req1 + req2) * RENT_PRICE + GAMMA * V[spNLoc1, spNLoc2]
+        action_return += prob * reward
 
-    nLoc1 = int(min(nLoc1 + ret1 - action, MAX_CARS))
-    nLoc2 = int(min(nLoc2 + ret2 + action, MAX_CARS))
-
-    return (
-        State(nLoc1, nLoc2, False), rented * RENT_PRICE - abs(action) * CAR_MOVE_COST)
+    return action_return
 
 
 def states():
@@ -75,9 +72,9 @@ def states():
             yield State(nLoc1, nLoc2)
 
 
-def states_updates(s):
-    for req1 in range(0, s.nLoc1 + 1):
-        for req2 in range(0, s.nLoc2 + 1):
+def states_updates(nLoc1, nLoc2):
+    for req1 in range(MAX_EXPECTED_UPDATE):
+        for req2 in range(MAX_EXPECTED_UPDATE):
             if USE_EXPECTED_RETURNS:
                 yield ProbableUpdate(req1, PMF_MATRIX_MAP.get(LOC1_EXPECTED_REQUEST)[req1],
                                      req2, PMF_MATRIX_MAP.get(LOC2_EXPECTED_REQUEST)[req2],
@@ -85,8 +82,8 @@ def states_updates(s):
                                      LOC2_EXPECTED_RETURN, 1.0
                                      )
             else:
-                for ret1 in range(0, min(MAX_CARS - s.nLoc1, MAX_CARS_MOVED) + 1):
-                    for ret2 in range(0, min(MAX_CARS - s.nLoc2, MAX_CARS_MOVED) + 1):
+                for ret1 in range(MAX_EXPECTED_UPDATE):
+                    for ret2 in range(MAX_EXPECTED_UPDATE):
                         yield ProbableUpdate(req1, PMF_MATRIX_MAP.get(LOC1_EXPECTED_REQUEST)[req1],
                                              req2, PMF_MATRIX_MAP.get(LOC2_EXPECTED_REQUEST)[req2],
                                              ret1, PMF_MATRIX_MAP.get(LOC1_EXPECTED_RETURN)[ret1],
@@ -100,7 +97,7 @@ def policy_evaluation(V, pi):
     theta = 0.0001
     delta = 1
     iteration = 0
-    # policy evaluation
+
     while delta > theta:
         delta = 0
         iteration += 1
@@ -108,18 +105,12 @@ def policy_evaluation(V, pi):
 
         for s in states():
             v = V[s.nLoc1, s.nLoc2]
-            v_new = 0
-            v_new_updates = []
-            for u in states_updates(s):
-                sp, r = step(pi[s.nLoc1, s.nLoc2], u, s)
-                vsp = 0 if sp.terminated else V[sp.nLoc1, sp.nLoc2]
-                # v_new_updates.append((r, p, vsp, p * (r + GAMMA * vsp)))
-                prob = u.preq1 * u.preq2 * u.pret1 * u.pret2
-                v_new += prob * (r + GAMMA * vsp)
 
-            V[s.nLoc1, s.nLoc2] = v_new
+            a = pi[s.nLoc1, s.nLoc2]
+            action_return = step(a, s, V)
+            V[s.nLoc1, s.nLoc2] = action_return
 
-            delta = max(abs(V[s.nLoc1, s.nLoc2] - v), delta)
+            delta = max(abs(action_return - v), delta)
 
         # if iteration % 10 == 0:
         print("policy_evaluation iteration {}, max delta='{}' in {} seconds"
@@ -135,19 +126,13 @@ def policy_improvement(V, pi):
     for s in states():
         old_action = pi[s.nLoc1, s.nLoc2]
         actions = np.arange(-s.nLoc2, s.nLoc1 + 1)  # negative actions goes to location 1
-        action_values = np.empty_like(actions)
+        action_returns = np.empty_like(actions)
 
         for a in range(len(actions)):
-            sum = 0
-            for u in states_updates(s):
-                sp, r = step(actions[a], u, s)
-                vsp = 0 if sp.terminated else V[sp.nLoc1, sp.nLoc2]
+            action_return = step(a, s, V)
+            action_returns[a] = action_return
 
-                prob = u.preq1 * u.preq2 * u.pret1 * u.pret2
-                sum += prob * (r + GAMMA * vsp)
-            action_values[a] = sum
-
-        pi[s.nLoc1, s.nLoc2] = actions[np.argmax(action_values)]
+        pi[s.nLoc1, s.nLoc2] = actions[np.argmax(action_returns)]
 
         if pi[s.nLoc1, s.nLoc2] != old_action: policy_stable = False
 
@@ -158,7 +143,7 @@ def policy_improvement(V, pi):
 
 def policy_iteration():
     V = np.zeros((MAX_CARS + 1, MAX_CARS + 1))
-    pi = np.zeros((MAX_CARS + 1, MAX_CARS + 1))
+    pi = np.zeros((MAX_CARS + 1, MAX_CARS + 1), dtype=int)
 
     policy_stable = False
     iteration = 0
