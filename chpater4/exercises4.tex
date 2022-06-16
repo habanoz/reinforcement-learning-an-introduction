@@ -1,0 +1,177 @@
+%! Author = melek
+%! Date = 9.06.2022
+
+% Preamble
+\documentclass[11pt]{article}
+
+% Packages
+\usepackage{amsmath}
+\DeclareMathOperator*{\argmax}{argmax}
+
+
+% Document
+\begin{document}
+
+    \maketitle
+    \setcounter{section}{3}
+
+
+    \section{Exercises}
+
+    \subsection{Question}
+    In Example 4.1, if Pİ is the equiprobable random policy, what is q pi (11, down)?
+    What is q pi (7, down)?
+
+    \subsection*{Answer}
+
+    $ q_\pi(s,a) = r + \gamma v_\pi (s') $
+
+    where reward is always -1 and rewards are not discounted.
+
+    $ q_\pi(s,a) = -1 + v_\pi (s') $
+
+    $ q_\pi(11,down) = -1 + v_\pi (15) = -1 + 0 = -1  $
+
+    $ q_\pi(7,down) = -1 + v_\pi (11) = -1 + (-14) = -15 $ ( $v_\pi (11)$  is looked up from figure 4.1 )
+
+    \subsection{Question}
+
+    In Example 4.1, suppose a new state 15 is added to the gridworld just below state 13, and its actions, left, up, right, and down, take the agent to states 12, 13, 14, and 15, respectively.
+    Assume that the transitions from the original states are unchanged.
+    What, then, is v pi (15) for the equiprobable random policy?
+    Now suppose the dynamics of state 13 are also changed, such that action down from state 13 takes the agent to the new state 15.
+    What is v pi (15) for the equiprobable random policy in this case?
+
+    \subsection*{Answer}
+
+    $ v_\pi(s) = \sum_{a}^{} \pi(a|s) [r(a,s) + \gamma v_\pi (s')] $
+
+    where actions are equaprobable, reward is always -1 and rewards are not discounted.
+
+    In first case, the new state is not reachable from state 13.
+
+    $ v_\pi(s) = \sum_{a} 0.25 [(-1) + v_\pi (s')] $
+
+    where $ v(12)=-22, v(13)=-20, v(14)=-14, v(9) = -20 $ :
+
+    $ v_\pi(15) = (-1) + 0.25 * [v_\pi (12) + v_\pi (13) + v_\pi (14) + v_\pi (15) ] $
+
+    $ v_\pi(15) = -15 + 0.25 v_\pi (15) = -20 $
+
+    In second case, the new state is reachable from state 13.
+    Now value of 13 depends on value of 15, and value of 15 depends on value of 13.
+    We have two equations with two unknowns which can be solved.
+
+    $v_\pi(15)$ is :
+
+    $ v_\pi(15) = (-1) + 0.25 * [v_\pi (12) + v_\pi (13) + v_\pi (14) + v_\pi (15) ] $
+
+    $ v_\pi(15) = -1 + 0.25 * [-36 + v_\pi (13) + v_\pi (15) ] = -1 -9 + \frac{v_\pi (13)}{4}  + \frac{v_\pi (15)}{4}$
+
+    $ v_\pi(15) = \frac{ -40 + v_\pi (13) }{3}$
+
+    $v_\pi(13)$ is :
+
+    $ v_\pi(13) = (-1) + 0.25 * [v_\pi (12) + v_\pi (9) + v_\pi (14) + v_\pi (15) ] $
+
+    $ v_\pi(13) = -1 + 0.25 * [-56 + v_\pi (15) ] = -1 -14 + \frac{v_\pi (15)}{4} =  -15 + \frac{v_\pi (15)}{4} $
+
+    One can plug $ v_\pi(13) $ to obtain $ v_\pi(15) $ :
+
+    $ v_\pi(15) = \frac{ -40 + -15 + \frac{v_\pi (15)}{4} }{3} = -20$
+
+    \subsection{Question}
+
+    What are the equations analogous to (4.3), (4.4), and (4.5) for the action-value function q pi and its successive approximation by a sequence of functions q 0 , q 1 , q 2 , . . .?
+
+    \subsection*{Answer}
+
+    \begin{equation}
+        q_{\pi}(s, a) = E_\pi [R_{t+1} + \sum_{a'}  \gamma  \pi(a|S_{t+1}) q_{\pi} (S_{t+1}, a') | S_t = s, A_t = a]
+    \end{equation}
+
+    \begin{equation}
+        q_{\pi}(s, a) = \sum_{s',r} p(s', r | s, a) [r + \sum_{a'} \gamma \pi(a|S_{t+1}) q_\pi(s', a')]
+    \end{equation}
+
+    \begin{equation}
+        q_{k+1}(s, a) = \sum_{s',r} p(s', r | s, a) [r + \sum_{a'} \gamma \pi(a|S_{t+1}) q_k(s', a')]
+    \end{equation}
+
+    \subsection{Question}
+
+    The policy iteration algorithm on page 80 has a subtle bug in that it may never terminate if the policy continually switches between two or more policies that are equally good.
+    This is ok for pedagogy, but not for actual use.
+    Modify the pseudocode so that convergence is guaranteed.
+
+    \subsection*{Answer}
+
+    If $old-action \neq \pi(s)$, then policy-stable=false
+
+    This expression may result in choosing between equally good actions causing the policy improvement step not to stop.
+
+    Assuming the policy function assigns zero probabilities to all sub-optimal functions and return a set of optimal actions. A possible solution could be:
+
+    If $old-action \notin \pi(s)$, then policy-stable=false
+
+    \subsection{Question}
+
+    How would policy iteration be defined for action values?
+    Give a complete algorithm for computing q * , analogous to that on page 80 for computing v * .
+    Please pay special attention to this exercise, because the ideas involved will be used throughout the rest of the book.
+
+    \subsection*{Answer}
+
+    \subsubsection*{Policy Evaluation}
+    Loop for each $ s \in S $: \\
+    Loop for each $ a \in A(s) $: \\
+    \begin{itemize}
+        q = Q(s, a) \\
+        Q(s, a) = $ \sum_{s',r} p(s',r| s, a) [ r + \gamma Q(s', \pi(s'))  ] $
+    \end{itemize}
+
+    \subsubsection*{Policy Improvement}
+    $ \pi(s) = \argmax_{a} Q(s, a) $
+
+    \subsection{Question}
+
+    Suppose you are restricted to considering only policies that are "$\epsilon$-soft, meaning that the probability of selecting each action in each state, s, is at least $\epsilon/|A(s)|$.
+    Describe qualitatively the changes that would be required in each of the steps 3, 2, and 1, in that order, of the policy iteration algorithm for v* on page 80.
+
+    \subsection*{Answer}
+
+    \subsubsection*{Step 3}
+
+    In policy improvement step, instead of selecting the maximal action, $ \epsilon-$soft assigns a propability to each action using the following rule:
+
+    \begin{equation}
+        \pi(a|s) =
+        \begin{cases}
+            1-\epsilon + \epsilon/|A(s)|,& \text{ if } a = \argmax_{a'}q(a'|s) \\
+            \epsilon/|A(s)|,& \text{ else }
+        \end{cases}
+    \end{equation}
+
+    \subsubsection*{Step 2}
+
+    In policy iteration step, instead of using a single action, use all actions weighted with the associated proability of selecting that action.
+
+    \subsubsection*{Step 1}
+
+    In initialization step, assign equal probability to all actions in a state.
+
+    \subsection{Question}
+
+    (programming) Write a program for policy iteration and re-solve Jack’s car rental problem with the following changes.
+    One of Jack’s employees at the first location rides a bus home each night and lives near the second location.
+    She is happy to shuttle one car to the second location for free.
+    Each additional car still costs \$2, as do all cars moved in the other direction.
+    In addition, Jack has limited parking space at each location.
+    If more than 10 cars are kept overnight at a location (after any moving of cars), then an additional cost of \$4 must be incurred to use a second parking lot (independent of how many cars are kept there).
+    These sorts of non-linearities and arbitrary dynamics often occur in real problems and cannot easily be handled by optimization methods other than dynamic programming.
+    To check your program, first replicate the results given for the original problem.
+
+    \subsection*{Answer}
+
+
+\end{document}
