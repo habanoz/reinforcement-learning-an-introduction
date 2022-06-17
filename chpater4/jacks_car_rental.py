@@ -12,8 +12,10 @@ LOC2_EXPECTED_REQUEST = 4
 LOC1_EXPECTED_RETURN = 3
 LOC1_EXPECTED_REQUEST = 3
 MAX_EXPECTED_UPDATE = 11
+FREE_CARS_MOVE_TO_LOC2 = 0
 
 CAR_MOVE_COST = 2
+CAR_PARK_COST = 0
 RENT_PRICE = 10
 MAX_CARS = 20
 MAX_CARS_MOVED = 5
@@ -24,10 +26,9 @@ USE_EXPECTED_RETURNS = True
 
 
 class State:
-    def __init__(self, nLoc1, nLoc2, terminated=False):
+    def __init__(self, nLoc1, nLoc2):
         self.nLoc1 = nLoc1
         self.nLoc2 = nLoc2
-        self.terminated = terminated
 
 
 class ProbableUpdate:
@@ -45,20 +46,34 @@ class ProbableUpdate:
         self.pret2 = pret2
 
 
-def step(action, s, V):
+def step(cars_moved, s, V):
     """
 
-    :param action: negative actions are towards location 1
+    :param cars_moved: negative actions are towards location 1
     :param s: state
     :param V: value matrix
     :return: action return
     """
-    action_return = -abs(action) * CAR_MOVE_COST
 
-    nLoc1 = min(s.nLoc1 - action, MAX_CARS)
-    nLoc2 = min(s.nLoc2 + action, MAX_CARS)
+    nLoc1 = s.nLoc1
+    nLoc2 = s.nLoc2
 
-    for u in states_updates(nLoc1, nLoc2):
+    cars_moved_to_charge = cars_moved
+    if cars_moved > 0:  # to location 2
+        cars_moved_to_charge = max(cars_moved_to_charge - FREE_CARS_MOVE_TO_LOC2, 0)
+        nLoc1 -= cars_moved
+    elif cars_moved < 0:
+        nLoc2 -= abs(cars_moved)
+
+    action_return = -abs(cars_moved_to_charge) * CAR_MOVE_COST
+    action_return -= ((nLoc1 > 10) + (nLoc2 > 10)) * CAR_PARK_COST
+
+    if cars_moved > 0:  # to location 2
+        nLoc2 = min(nLoc2 + cars_moved, MAX_CARS)
+    elif cars_moved < 0:
+        nLoc1 = min(nLoc1 + abs(cars_moved), MAX_CARS)
+
+    for u in states_updates():
         req1, req2, ret1, ret2 = min(u.req1, nLoc1), min(u.req2, nLoc2), u.ret1, u.ret2
         prob = u.preq1 * u.preq2 * u.pret1 * u.pret2
 
@@ -77,7 +92,7 @@ def states():
             yield State(nLoc1, nLoc2)
 
 
-def states_updates(nLoc1, nLoc2):
+def states_updates():
     for req1 in range(MAX_EXPECTED_UPDATE):
         for req2 in range(MAX_EXPECTED_UPDATE):
             if USE_EXPECTED_RETURNS:
@@ -151,7 +166,7 @@ def policy_improvement(V, pi):
     return policy_stable
 
 
-def policy_iteration():
+def policy_iteration(file_name='figure_4_2.png'):
     V = np.zeros((MAX_CARS + 1, MAX_CARS + 1))
     pi = np.zeros((MAX_CARS + 1, MAX_CARS + 1), dtype=int)
 
@@ -178,7 +193,7 @@ def policy_iteration():
 
     plot_value_function(V, axes)
 
-    plt.savefig('../images/figure_4_2.png')
+    plt.savefig('../images/'+file_name)
     plt.close()
 
 
@@ -197,6 +212,16 @@ def plot_policy(axes, iteration, pi):
     fig.set_xlabel('# cars at second location', fontsize=30)
     fig.set_title('policy {}'.format(iteration), fontsize=30)
 
+def solve_jacks_car_rental():
+    policy_iteration()
+
+def solve_jacks_car_rental_e_4_7():
+    global FREE_CARS_MOVE_TO_LOC2
+    FREE_CARS_MOVE_TO_LOC2 = 1
+    global CAR_PARK_COST
+    CAR_PARK_COST = 4
+    policy_iteration(file_name='figure_4_2_e_4_7.png')
 
 if __name__ == '__main__':
-    policy_iteration()
+    # solve_jacks_car_rental()
+    solve_jacks_car_rental_e_4_7()
