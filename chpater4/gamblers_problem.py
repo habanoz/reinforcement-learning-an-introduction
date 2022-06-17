@@ -69,6 +69,7 @@ def value_iteration(file_name='figure_4_3.png'):
     #np.savetxt("v.txt", V)
     #np.savetxt("pi.txt", pi)
 
+
     plt.figure(figsize=(10, 20))
 
     plt.subplot(2, 1, 1)
@@ -78,14 +79,17 @@ def value_iteration(file_name='figure_4_3.png'):
     if len(value_function_history)>10:
         plt.plot(value_function_history[-1][1:100], label='sweep {}'.format(len(value_function_history)-1))
 
+    plt.title('Ph={}'.format(PR_H))
     plt.xlabel('Capital')
     plt.ylabel('Value estimates')
     plt.legend(loc='best')
+
 
     plt.subplot(2, 1, 2)
     plt.bar(np.arange(TARGET_VALUE + 1), pi)
     plt.xlabel('Capital')
     plt.ylabel('Final policy (stake)')
+
 
     plt.savefig('../images/' + file_name)
     plt.close()

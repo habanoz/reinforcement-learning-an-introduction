@@ -97,6 +97,7 @@
     \end{equation}
 
     \begin{equation}
+        \label{eqn:eq4_5}
         q_{k+1}(s, a) = \sum_{s',r} p(s', r | s, a) [r + \sum_{a'} \gamma \pi(a|S_{t+1}) q_k(s', a')]
     \end{equation}
 
@@ -205,17 +206,34 @@
 
     \subsection{Question}
 
-    (programming) Implement value iteration for the gambler’s problem and solve it for p h = 0.25 and p h = 0.55.
+    (programming) Implement value iteration for the gambler’s problem and solve it for ph = 0.25 and ph = 0.55.
     In programming, you may find it convenient to introduce two dummy states corresponding to termination with capital of 0 and 100, giving them values of 0 and 1 respectively.
     Show your results graphically, as in Figure 4.3.
     Are your results stable as theta goes to 0?
 
     \subsection*{Answer}
 
+    \includegraphics[scale=0.4]{figure_4_3_e_4_9_p25}
+
+    Ph 0.25 gives similar results to Ph 0.4. This is expected because both cases disfavors the gambler.
+
+    \includegraphics[scale=0.4]{figure_4_3_e_4_9_p55}
+
+    Ph 0.55 encourages longer plays.
+    The gambler uses small stake increments to limit losing.
+
+    As theta approaches to zero, results remain stable but number of sweeps needed to stabilize is raised.
+
     \subsection{Question}
 
     What is the analog of the value iteration update (4.10) for action values, q k+1 (s, a)?
 
     \subsection*{Answer}
-    
+
+    See equation \ref{eqn:eq4_5} for reference.
+
+    \begin{equation}
+        q_{k+1}(s, a) = \sum_{s',r} p(s', r | s, a) [r + \gamma \max_{a'} q_k(s', a')]
+    \end{equation}
+
 \end{document}
