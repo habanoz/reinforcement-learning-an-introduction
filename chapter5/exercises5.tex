@@ -119,5 +119,72 @@
     The only difference would be the added 1/k term to the sum.
     The variance would still be infinite.
 
+    \subsection{Question}
+
+    Modify the algorithm for first-visit MC policy evaluation (Section 5.1) to use the incremental implementation for sample averages described in Section 2.4.
+
+    \subsection*{Answer}
+
+    Update rule should be replaced with the following expression.
+
+    \begin{equation}
+        V(S_{t}) = V(S_{t}) + (G - V(S_{t})) / |\tau(S_{t})|
+    \end{equation}
+
+    \subsection{Question}
+
+    Derive the weighted-average update rule (5.8) from (5.7).
+    Follow the pattern of the derivation of the unweighted rule (2.3).
+
+    \subsection*{Answer}
+
+    \begin{equation}
+        C_{n}= \sum_{k=1}^{n} W_{k}
+    \end{equation}
+
+    \begin{equation}
+        V_{n+1}=\frac{ \sum_{k=1}^{n} W_{k} G_{k}  }{ \sum_{k=1}^{n} W_{k} } = \frac{ 1 }{ \sum_{k=1}^{n} W_{k} } \sum_{k=1}^{n} W_{k} G_{k} = \frac{ 1 }{ C_{n} } ( W_{n} G_{n} +  \sum_{k=1}^{n - 1} W_{k} G_{k} )
+    \end{equation}
+
+    \begin{equation}
+        V_{n+1} = \frac{ 1 }{ C_{n} } ( W_{n} G_{n} +  \frac{ \sum_{k=1}^{n-1} W_{k} }{ \sum_{k=1}^{n-1} W_{k} } \sum_{k=1}^{n - 1} W_{k} G_{k} ) = \frac{ 1 }{ C_{n} } ( W_{n} G_{n} + V_{n} \sum_{k=1}^{n-1} W_{k}  )
+    \end{equation}
+
+    \begin{equation}
+        V_{n+1} = \frac{ 1 }{ C_{n} } ( W_{n} G_{n} + V_{n} (\sum_{k=1}^{n} W_{k} - W_{n}) ) = \frac{ 1 }{ C_{n} } ( W_{n} G_{n} + V_{n} (C_{n} - W_{n}) )
+    \end{equation}
+
+    \begin{equation}
+        V_{n+1} = \frac{ 1 }{ C_{n} } ( W_{n} G_{n} + V_{n} C_{n} - V_{n}  W_{n} ) = \frac{ 1 }{ C_{n} } ( V_{n} C_{n} + W_{n} ( G_{n} - V_{n} ) )
+    \end{equation}
+
+    \begin{equation}
+        V_{n+1} = V_{n} +  \frac{ W_{n} ( G_{n} - V_{n} ) }{ C_{n}}
+    \end{equation}
+
+    \subsection{Question}
+
+    In the boxed algorithm for off-policy MC control, you may have been expecting the W update to have involved the importance-sampling ratio $ \frac{\pi(A_t|S_t)}{b(A_t|S_t)} $, but instead it involves $ \frac{ 1 }{b(A_t|S_t)} $ .
+    Why is this nevertheless correct?
+
+    \subsection*{Answer}
+
+    $\pi$ is a deterministic policy ( e.g. argmax is used.).
+    $ \pi $ returns 1 for the greedy action and 0 otherwise.
+    The importance-sampling ratio will become 0 after policy $\pi$ and b diverges.
+    As a matter of the fact, algorithm will quit the actions loop once $ A_t \neq \pi(S_t)$.
+
+    In this setting it is OK to use 1 instead of $\pi(A_t|S_t)$ which already equals to 1.
+
+    \subsection{Question}
+
+    Racetrack (programming)
+
+    Consider driving a race car around a turn like those shown in Figure 5.5. You want to go as fast as possible, but not so fast as to run off the track.
+
+    Apply a Monte Carlo control method to this task to compute the optimal policy from each starting state.
+    Exhibit several trajectories following the optimal policy (but turn the noise o↵ for these trajectories).
+
+    \subsection*{Answer}
 
 \end{document}
