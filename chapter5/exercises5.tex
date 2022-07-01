@@ -9,6 +9,7 @@
 \DeclareMathOperator*{\argmax}{argmax}
 
 \usepackage{graphicx}
+\usepackage{hyperref}
 \graphicspath{ {../images/} }
 
 % Document
@@ -61,7 +62,7 @@
     Average return for each state-action pair can be calculated similarly.
 
     \begin{equation}
-        Q_(S,A) = Q_(S,A) + (G - Q_(S,A)) / N(S,A)
+        Q(S,A) = Q(S,A) + (G - Q(S,A)) / N(S,A)
     \end{equation}
 
     \subsection{Question}
@@ -94,7 +95,7 @@
     \subsection*{Answer}
 
     \begin{equation}
-        Q(s,a) = \frac{\sum_{t \in \tau (s,a) } Pt:(T(t)-1) G_{t}] }{ \sum_{t \in \tau (s,a) } Pt:(T(t)-1) }
+        Q(s,a) = \frac{\sum_{t \in \tau (s,a) } \rho_{t:(T(t)-1)} G_{t} }{ \sum_{t \in \tau (s,a) } \rho_{t:(T(t)-1)} }
     \end{equation}
 
     \subsection{Question}
@@ -132,15 +133,32 @@
     \end{equation}
 
     \subsection{Question}
+    \label{question:derive-update-rule-5-8}
 
     Derive the weighted-average update rule (5.8) from (5.7).
     Follow the pattern of the derivation of the unweighted rule (2.3).
 
     \subsection*{Answer}
 
+    An important alternative is weighted importance sampling, which uses a weighted average, defined as:
+
+    \begin{equation}
+        V(s) = \frac{ \sum_{t \in \tau(s)} \rho_{t:T(t)-1} G_t }{\sum_{t \in \tau(s)} \rho_{t:T(t)-1}}
+    \end{equation}
+
+    Sequence of returns $G_1 , G_2 , \dots , G_{n-1}$ , all starting in the same state and each with a corresponding random weight $W_i$ (e.g., $ W_i = \rho_{ t_i : T (t_i)-1} $).
+
+    \begin{equation}
+        V_{n}= \frac{\sum_{k=1}^{n-1} W_{k} G_{k}}{\sum_{k=1}^{n-1} W_{k}}
+    \end{equation}
+
+    We have $C_n$ defined as :
+
     \begin{equation}
         C_{n}= \sum_{k=1}^{n} W_{k}
     \end{equation}
+
+    The update rule would follow:
 
     \begin{equation}
         V_{n+1}=\frac{ \sum_{k=1}^{n} W_{k} G_{k}  }{ \sum_{k=1}^{n} W_{k} } = \frac{ 1 }{ \sum_{k=1}^{n} W_{k} } \sum_{k=1}^{n} W_{k} G_{k} = \frac{ 1 }{ C_{n} } ( W_{n} G_{n} +  \sum_{k=1}^{n - 1} W_{k} G_{k} )
@@ -212,7 +230,7 @@
     Average values over speeds.
 
     \subsubsection{Grid 2 (env3)}
-    
+
     \includegraphics[scale=0.7]{env3_5_3_1_max}
 
     Maximum values over speeds.
@@ -237,5 +255,117 @@
     \includegraphics[scale=0.7]{env3_demo_e_5_12_21}
 
     Demo path.
+
+    \subsection{Question}
+
+    Show the steps to derive (5.14) from (5.12).
+
+    \subsection*{Answer}
+
+    \begin{equation}
+        \rho_{t:T-1}R_{t+1} = \frac{\pi(A_t|S_t)}{b(A_t|S_t)} \frac{\pi(A_{t+1}|S_{t+1})}{b(A_{t+1}|S_{t+1})} \dots \frac{\pi(A_{T-1}|S_{T-1})}{b(A_{T-1}|S_{T-1})} R_{t+1}
+    \end{equation}
+
+    \begin{equation}
+        E[\rho_{t:T-1}R_{t+1}] = E[\frac{\pi(A_t|S_t)}{b(A_t|S_t)} \frac{\pi(A_{t+1}|S_{t+1})}{b(A_{t+1}|S_{t+1})} \dots \frac{\pi(A_{T-1}|S_{T-1})}{b(A_{T-1}|S_{T-1})} R_{t+1}]
+    \end{equation}
+
+    $R_{t+1}$ depends only to time step $t$ thus we can write in $E[XY] = E[X] * E[Y]$ form.
+
+    \begin{equation}
+        E[\rho_{t:T-1}R_{t+1}] = E[\frac{\pi(A_t|S_t)}{b(A_t|S_t)} R_{t+1}] E[\frac{\pi(A_{t+1}|S_{t+1})}{b(A_{t+1}|S_{t+1})} \dots \frac{\pi(A_{T-1}|S_{T-1})}{b(A_{T-1}|S_{T-1})}]
+    \end{equation}
+
+    More over, $\pi$ or $b$ does not depend on previous timestamp.
+
+    \begin{equation}
+        E[\rho_{t:T-1}R_{t+1}] = E[\frac{\pi(A_t|S_t)}{b(A_t|S_t)} R_{t+1}] E[\frac{\pi(A_{t+1}|S_{t+1})}{b(A_{t+1}|S_{t+1})}] \dots E[\frac{\pi(A_{T-1}|S_{T-1})}{b(A_{T-1}|S_{T-1})}]
+    \end{equation}
+
+    Then we have $E[\frac{ \pi( A_{k}|S_{k} )}{ b(A_{k}|S_{k})})] = 1$
+
+
+    \begin{equation}
+        E[\rho_{t:T-1}R_{t+1}] = E[\frac{\pi(A_t|S_t)}{b(A_t|S_t)} R_{t+1}] * 1 \dots 1
+    \end{equation}
+
+    \begin{equation}
+        E[\rho_{t:T-1}R_{t+1}] = E[\rho_{t:t}R_{t+1}]
+    \end{equation}
+
+
+    \subsection{Question}
+
+    Modify the algorithm for off-policy Monte Carlo control (page 111) to use the idea of the truncated weighted-average estimator (5.10).
+    Note that you will first need to convert this equation to action values.
+
+    \subsection*{Answer}
+
+    Weighted importance-sampling estimator:
+
+    \begin{equation}
+        V(s) =  \frac{ \sum_{t \in \tau(s) } [ (1-\gamma) \sum_{h=t+1}^{T(t)-1} \gamma^{h-t-1} \rho_{t:h-1} \bar{G}_{t:h} + \gamma^{T(t)-t-1} \rho_{t:T(t)-1} \bar{G}_{t:T(t)} ]   }{ \sum_{t \in \tau(s) } [ (1-\gamma) \sum_{h=t+1}^{T(t)-1} \gamma^{h-t-1} \rho_{t:h-1} + \gamma^{T(t)-t-1} \rho_{t:T(t)-1} ]  }
+    \end{equation}
+
+    where $\tau(s)$ is the set of all time steps in which state s is visited.
+    We can turn this into action values:
+
+    \begin{equation}
+        Q(s,a) =  \frac{ \sum_{t \in \tau(s, a) } [ (1-\gamma) \sum_{h=t+1}^{T(t)-1} \gamma^{h-t-1} \rho_{t:h-1} \bar{G}_{t:h} + \gamma^{T(t)-t-1} \rho_{t:T(t)-1} \bar{G}_{t:T(t)} ]   }{ \sum_{t \in \tau(s,a) } [ (1-\gamma) \sum_{h=t+1}^{T(t)-1} \gamma^{h-t-1} \rho_{t:h-1} + \gamma^{T(t)-t-1} \rho_{t:T(t)-1} ]  }
+    \end{equation}
+
+    where $\tau(s,a)$ is the set of all time steps in which state s is visited and action a is selected.
+
+    We can turn this expression into update rule by following steps similar to Question~\ref{question:derive-update-rule-5-8} .
+
+    \begin{equation}
+        C_{n} = \sum_{k=1}^{n} B_{k}
+    \end{equation}
+
+    \begin{equation}
+        Q_{n+1} = \frac{ \sum_{k=1}^{n} A_{k}}{ \sum_{k=1}^{n} B_{k} } = \frac{ \sum_{k=1}^{n-1} A_{k} + A_{n}}{ \sum_{k=1}^{n} B_{k} } = \frac{ \frac{\sum_{k=1}^{n-1} B_{k} }{\sum_{k=1}^{n-1} B_{k} } \sum_{k=1}^{n-1} A_{k} + A_{n}}{ \sum_{k=1}^{n} B_{k} }  = \frac{ Q_{n} \sum_{k=1}^{n-1} B_{k} + A_{n}}{ \sum_{k=1}^{n} B_{k} }
+    \end{equation}
+
+    \begin{equation}
+        Q_{n+1}  = \frac{1}{C_{n}} (  Q_{n} \sum_{k=1}^{n-1} B_{k} + A_{n} ) = \frac{1}{C_{n}} ( Q_{n} ( \sum_{k=1}^{n} B_{k} - B_{n} ) + A_{n} ) = \frac{1}{C_{n}} ( Q_{n} ( C_{n} - B_{n} ) + A_{n} )
+    \end{equation}
+
+     \begin{equation}
+        Q_{n+1} = Q_{n} + \frac{A_{n} -  Q_{n} B_{n} }{C_{n}}
+    \end{equation}
+
+    With some intuition from \href{https://github.com/vojtamolda/reinforcement-learning-an-introduction/blob/main/chapter05/chapter05.pdf}{github.com/vojtamolda} turn the update rule into incremental component updates.
+
+    Nominator:
+
+    \begin{equation}
+        A_n = \sum_{t \in \tau(s, a) } [ (1-\gamma) \sum_{h=t+1}^{T(t)-1} \gamma^{h-t-1} \rho_{t:h-1} \bar{G}_{t:h} + \gamma^{T(t)-t-1} \rho_{t:T(t)-1} \bar{G}_{t:T(t)} ]
+    \end{equation}
+
+    Where:
+
+    \begin{equation}
+        a_t = \sum_{h=t+1}^{T(t)-1} \gamma^{h-t-1} \rho_{t:h-1} \bar{G}_{t:h}
+    \end{equation}
+
+    \begin{equation}
+        W_t = \rho_{t:T(t)-1}
+    \end{equation}
+
+    \begin{equation}
+       \bar{G}_t = \bar{G}_{t:T(t)}
+    \end{equation}
+
+    Denominator:
+
+    \begin{equation}
+        B_n =  \sum_{t \in \tau(s,a) } [ (1-\gamma) \sum_{h=t+1}^{T(t)-1} \gamma^{h-t-1} \rho_{t:h-1} + \gamma^{T(t)-t-1} \rho_{t:T(t)-1} ]
+    \end{equation}
+
+    Where:
+
+    \begin{equation}
+        b_t = \sum_{h=t+1}^{T(t)-1} \gamma^{h-t-1} \rho_{t:h-1}
+    \end{equation}
 
 \end{document}
