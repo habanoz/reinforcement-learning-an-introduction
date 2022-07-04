@@ -293,7 +293,6 @@
         E[\rho_{t:T-1}R_{t+1}] = E[\rho_{t:t}R_{t+1}]
     \end{equation}
 
-
     \subsection{Question}
 
     Modify the algorithm for off-policy Monte Carlo control (page 111) to use the idea of the truncated weighted-average estimator (5.10).
@@ -330,13 +329,19 @@
         Q_{n+1}  = \frac{1}{C_{n}} (  Q_{n} \sum_{k=1}^{n-1} B_{k} + A_{n} ) = \frac{1}{C_{n}} ( Q_{n} ( \sum_{k=1}^{n} B_{k} - B_{n} ) + A_{n} ) = \frac{1}{C_{n}} ( Q_{n} ( C_{n} - B_{n} ) + A_{n} )
     \end{equation}
 
-     \begin{equation}
+    \begin{equation}
         Q_{n+1} = Q_{n} + \frac{A_{n} -  Q_{n} B_{n} }{C_{n}}
     \end{equation}
 
-    With some intuition from \href{https://github.com/vojtamolda/reinforcement-learning-an-introduction/blob/main/chapter05/chapter05.pdf}{github.com/vojtamolda} turn the update rule into incremental component updates.
+    Turn the update rule into incremental component updates.
 
-    Nominator:
+    \subsubsection*{$C_n$ in recursive form}
+
+    \begin{equation}
+        C_{n} = C_{n+1} + B_{n+1}
+    \end{equation}
+
+    \subsubsection*{$A_n$ in recursive form}
 
     \begin{equation}
         A_n = \sum_{t \in \tau(s, a) } [ (1-\gamma) \sum_{h=t+1}^{T(t)-1} \gamma^{h-t-1} \rho_{t:h-1} \bar{G}_{t:h} + \gamma^{T(t)-t-1} \rho_{t:T(t)-1} \bar{G}_{t:T(t)} ]
@@ -349,14 +354,18 @@
     \end{equation}
 
     \begin{equation}
-        W_t = \rho_{t:T(t)-1}
+        w_t = \rho_{t:T(t)-1}
     \end{equation}
 
     \begin{equation}
-       \bar{G}_t = \bar{G}_{t:T(t)}
+        \bar{G}_t = \bar{G}_{t:T(t)}
     \end{equation}
 
-    Denominator:
+    \begin{equation}
+        A_n = \sum_{t \in \tau(s, a) } [ (1-\gamma) a_t + \gamma^{T(t)-t-1} w_{t} \bar{G}_t ]
+    \end{equation}
+
+    \subsubsection*{$ B_n$ in recursive form}
 
     \begin{equation}
         B_n =  \sum_{t \in \tau(s,a) } [ (1-\gamma) \sum_{h=t+1}^{T(t)-1} \gamma^{h-t-1} \rho_{t:h-1} + \gamma^{T(t)-t-1} \rho_{t:T(t)-1} ]
@@ -368,4 +377,121 @@
         b_t = \sum_{h=t+1}^{T(t)-1} \gamma^{h-t-1} \rho_{t:h-1}
     \end{equation}
 
+    \begin{equation}
+        B_n =  \sum_{t \in \tau(s,a) } [ (1-\gamma) b_t + \gamma^{T(t)-t-1} w_{t} ]
+    \end{equation}
+
+    \subsubsection*{$b_t$ can be expanded}
+
+    \begin{equation}
+        b_t = \gamma^0 \rho_{t:t} + \gamma^1 \rho_{t:t+1} + \gamma^2 \rho_{t:t+2} + \dots + \gamma^{T-t-2} \rho_{t:T-2}
+    \end{equation}
+
+    \begin{equation}
+        b_t = \gamma^0 \frac{\pi(s_{t}|a_{t})}{b(s_{t}|a_{t})} + \gamma^1 \frac{\pi(s_{t}|a_{t})}{b(s_{t}|a_{t})} \frac{\pi(s_{t+1}|a_{t+1})}{b(s_{t+1}|a_{t+1})} + \gamma^2 \frac{\pi(s_{t}|a_{t})}{b(s_{t}|a_{t})} \frac{\pi(s_{t+1}|a_{t+1})}{b(s_{t+1}|a_{t+1})} \frac{\pi(s_{t+2}|a_{t+2})}{b(s_{t+2}|a_{t+2})} + \dots
+    \end{equation}
+
+    $b_t$ can be written recursively:
+
+    \begin{equation}
+        b_t = b_{t+1} * \gamma \frac{\pi(s_{t}|a_{t})}{b(s_{t}|a_{t})} + \frac{\pi(s_{t}|a_{t})}{b(s_{t}|a_{t})} \text{ where $b_T = 0$}
+    \end{equation}
+
+
+    \subsubsection*{$\bar{G}_{t}$ can be written recursively}
+
+    \begin{equation}
+        \bar{G}_{t} = \bar{G}_{t:T} = R_{t+1} + \bar{G}_{t+1:T}
+    \end{equation}
+
+    \subsubsection*{$w_{t}$ can be written recursively}
+
+    \begin{equation}
+        w_{t} = \rho_{t:t} + w_{t+1}
+    \end{equation}
+
+
+    \subsubsection*{$a_t$ can be expanded}
+
+    \begin{equation}
+        a_t = \gamma^0 \rho_{t:t} \bar{G}_{t:t+1} + \gamma^1 \rho_{t:t+1} \bar{G}_{t:t+2} + \gamma^2 \rho_{t:t+2} \bar{G}_{t:t+3} + \dots + \gamma^{T-t-2} \rho_{t:T-2} \bar{G}_{t:T-1}
+    \end{equation}
+
+    \begin{align*}
+        a_t = \gamma^0 \frac{\pi(s_{t}|a_{t})}{b(s_{t}|a_{t})} R_{t+1} + \gamma^1 \frac{\pi(s_{t}|a_{t})}{b(s_{t}|a_{t})} \frac{\pi(s_{t+1}|a_{t+1})}{b(s_{t+1}|a_{t+1})} (R_{t+1} + R_{t+2}) + \\
+        \gamma^2 \frac{\pi(s_{t}|a_{t})}{b(s_{t}|a_{t})} \frac{\pi(s_{t+1}|a_{t+1})}{b(s_{t+1}|a_{t+1})} \frac{\pi(s_{t+2}|a_{t+2})}{b(s_{t+2}|a_{t+2})} (R_{t+1} + R_{t+2} + R_{t+3})+ \dots
+    \end{align*}
+
+    $a_{t}$ can be written recursively:
+
+    \begin{equation}
+        a_T = a_{T-1} = 0
+    \end{equation}
+
+    \begin{equation}
+        a_{T-2} = \frac{\pi(s_{T-2}|a_{T-2})}{b(s_{T-2}|a_{T-2})} R_{T-1} = \frac{\pi(s_{T-2}|a_{T-2})}{b(s_{T-2}|a_{T-2})} ( R_{T-1} * [1] + \gamma a_{T-1} )
+    \end{equation}
+
+    \begin{equation}
+        a_{T-3} = \frac{\pi(s_{T-3}|a_{T-3})}{b(s_{T-3}|a_{T-3})} ( R_{T-2} * [1 + \gamma \frac{\pi(s_{T-2}|a_{T-2})}{b(s_{T-2}|a_{T-2})}] + \gamma a_{T-2} )
+    \end{equation}
+
+    \begin{equation}
+        a_{T-4} = \frac{\pi(s_{T-4}|a_{T-4})}{b(s_{T-4}|a_{T-4})} ( R_{T-3} * [1 + \gamma \frac{\pi(s_{T-3}|a_{T-3})}{b(s_{T-3}|a_{T-3})} + \gamma^2 \frac{\pi(s_{T-2}|a_{T-2})}{b(s_{T-2}|a_{T-2})} ] + \gamma a_{T-3} )
+    \end{equation}
+
+    The expression within the square brackets can be simplified to:
+
+    \begin{equation}
+        M_{t} = 1 + \sum_{k=2}^{T-t-1} \gamma^{T-t-k}  \frac{\pi(s_{T-k}|a_{T-k})}{b(s_{T-k}|a_{T-k})}
+    \end{equation}
+
+    Right side of plus one can be further simplified to:
+
+    \begin{equation}
+        m_{t} = \sum_{k=2}^{T-t-1} \gamma^{T-t-k}  \frac{\pi(s_{T-k}|a_{T-k})}{b(s_{T-k}|a_{T-k})}
+    \end{equation}
+
+    $m_{t}$ can be written recursively:
+
+    \begin{equation}
+        m_{t} = \gamma  (\frac{\pi(s_{t}|a_{t})}{b(s_{t}|a_{t})} + m_{t+1})  \text{ where $m_{T-2} = 0$}
+    \end{equation}
+
+    Final recursive expression for $a_t$ would be:
+
+    \begin{equation}
+        a_{t} = \frac{\pi(s_{t}|a_{t})}{b(s_{t}|a_{t})} ( R_{t+1} (1 + m_{t+1}) + \gamma a_{t+1})
+    \end{equation}
+
+    The final algorithm would look like:
+
+    \subsubsection*{Initialize}
+
+    $Q(s,a) = 0$ for all s,a. \\
+    $C(s,a) = 0$ for all s,a. \\
+    $ \pi(s) =a_0 $
+
+    \subsubsection*{Loop forever}
+    b=any soft policy \\
+    Generate and episode using $ b: S_0 , A_0 , R_1 , \dots , S_{T-1} , A_{T-1} , R_{T} $ \\
+    $ \bar{G} = R_t $ \\
+    $ w = 0 $ \\
+    $ a = 0 $ \\
+    $ b = 0 $ \\
+    $ m = 0 $
+
+    \subsubsection*{Loop for each step $t = T-1, T-2, \dots , 0$}
+
+    $\bar{G} = R_{t+1} + \bar{G} $ \\
+    $ A =  (1-\gamma) a + \gamma^{T-t-1} w \bar{G} $ \\
+    $ B =  (1-\gamma) b + \gamma^{T(t)-t-1} w  $ \\
+    $ C = C + B $ \\
+    $ Q = Q + \frac{A - Q B }{C} $ \\
+    $ \pi(S_t) = \argmax_a Q(S_t , a) $ \\
+    if $ A_t \neq \pi(S_t)$ then exit inner loop \\
+    $ m = \gamma  (\frac{1}{b(s_{t}|a_{t})} + m ) $ \\
+    $ a = \frac{1}{b(s_t|a_t)} ( R_{t+1} (1 + m) + \gamma a) $ \\
+    $ b = b * \gamma \frac{1}{b(s_{t}|a_{t})} + \frac{1}{b(s_{t}|a_{t})} $ \\
+    $ w = \frac{1}{b(s_t|a_t)} + w $
 \end{document}
