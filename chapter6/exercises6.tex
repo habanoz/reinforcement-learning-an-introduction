@@ -86,7 +86,189 @@
     MC will sample new complete episodes and at the beginning they will be very noisy.
 
 
+     \subsection{Question}
+
+    From the results shown in the left graph of the random walk example it appears that the first episode results in a change in only V (A).
+    What does this tell you about what happened on the first episode?
+    Why was only the estimate for this one state changed?
+    By exactly how much was it changed?
+
+    \subsection*{Answer}
+
+    It appears first episode ended through state A\@.
+
+    TD bootstraps which means it relies on previous estimates.
+    All states are initialized to 0.5.
+    This is an un-discounted task with $\alpha=0.5$.
+
+    Let's remember equation (6.2):
+
+    $V_{t+1}(S_t) = V_t(S_t) + \alpha [ R_{t+1} + \gamma V_t(S_{t+1}) -V_t(S_t) ]$
+    \newline
+
+    For all state changes except state A, V(S) is:
+
+    $V_{t+1}(S_t) = V_t(S_t) + \alpha [ R_{t+1} + \gamma V_t(S_{t+1}) -V_t(S_t) ] = 0.5 + 0.1 [0 + 0.5 - 0.5] $
+
+    $V_{t+1}(S_t) = 0.5 $ which indicates state values remain unchanged.
+    \newline
+
+    For change from state A to the terminal state, V(A) is:
+
+    $V_{t+1}(S_t) = V_t(S_t) + \alpha [ R_{t+1} + \gamma V_t(S_{t+1}) -V_t(S_t) ] = 0.5 + 0.1 [0 + 0 - 0.5] $
+
+    $V_{t+1}(S_t) = 0.45 $
 
 
+    \subsection{Question}
+
+    The specific results shown in the right graph of the random walk example are dependent on the value of the step-size parameter, $\alpha$.
+    Do you think the conclusions about which algorithm is better would be affected if a wider range of $\alpha$ values were used?
+    Is there a different, fixed value of $\alpha$at which either algorithm would have performed significantly better than shown?
+    Why or why not?
+
+    \subsection*{Answer}
+
+    For all experienced $\alpha$ values TD performs better than MC.
+    Using wider range of $\alpha$ would result in the same behaviour.
+
+    Smaller $\alpha$ values may decrease the RMS error for both algorithm while making the learning very slow.
+    Larger $\alpha$ values tends to speed up learning while increasing the RMS Error for both algorithms.
+
+    \subsection{Question}
+
+    In the right graph of the random walk example, the RMS error of the TD method seems to go down and then up again, particularly at high $\alpha$’s.
+    What could have caused this?
+    Do you think this always occurs, or might it be a function of how the approximate value function was initialized?
+
+    \subsection*{Answer}
+
+    All states are initialized with the same values.
+    States with actually larger values takes positives updates.
+    States with actually smaller values takes negative updates.
+    This trend continues even after optimal values are reached and thus leads to error.
+    This behaviour is especially visible for larger $\alpha$ values because they cause larger updates thus larger errors.
+
+    Solution to this problem is to use random initialization of states.
+
+    \subsection{Question}
+
+    In Example 6.2 we stated that the true values for the random walk example are 1/6 , 2/6 , 3/6 , 4/6 , and 5/6 , for states A through E.
+    Describe at least two different ways that these could have been computed.
+    Which would you guess we actually used?
+    Why?
+
+    \subsection*{Answer}
+
+    First solution would be to use dynamic programming with tabular updates.
+
+    Second solution would be to use linear algebra to find state values.
+
+    Equation 3.14:
+
+     \begin{equation}
+        v_{\pi}(s) = \sum_a \pi(a|s) \sum_{s',r} p(s',r| s,a) [r+\gamma v_{\pi}(s')]
+    \end{equation}
+
+    At each state neighbour states are selected with a probability of 1/2.
+    Transitions occur with a probability of 1.
+    This is a non-discounted problem.
+    Equation 3.14 becomes:
+
+    \begin{equation}
+        v_{\pi}(s) = \sum_a 0.5 [r+ v_{\pi}(s')]
+    \end{equation}
+
+    For each state this equation can be used:
+    \newline
+
+    $ v(A) = 0.5 [0+ v(Term)] + 0.5 [0+ v(B)] = 0.5*v(B) $
+
+    $ v(A) - 0.5*v(B) = 0 $
+    \newline
+
+    $ v(B) = 0.5 [0+ v(A)] + 0.5 [0+ v(C)] = 0.5*v(A) + 0.5*v(B) $
+
+    $ v(B) - 0.5*v(A) - 0.5*v(B) = 0 $
+    \newline
+
+    $ v(C) = 0.5 [0+ v(B)] + 0.5 [0+ v(D)] = 0.5*v(B) + 0.5*v(D) $
+
+    $ v(C) - 0.5*v(B) - 0.5*v(D) = 0 $
+    \newline
+
+    $ v(D) = 0.5 [0+ v(C)] + 0.5 [0+ v(E)] = 0.5*v(C) + 0.5*v(E) $
+
+    $ v(D) - 0.5*v(C) - 0.5*v(E) = 0 $
+    \newline
+
+    $ v(E) = 0.5 [0+ v(D)] + 0.5 [1+ v(Term)] = 0.5*v(D) $
+
+    $ v(E) - 0.5*v(D) = 0.5 $
+    \newline
+
+
+    This equations can be written in matrix form:
+
+    \begin{bmatrix}
+1 & -0.5 & 0 & 0 & 0\\
+-0.5 & 1 & -0.5 & 0 & 0\\
+0 & -0.5 & 1 & -0.5 & 0\\
+0 & 0 & -0.5 & 1 & -0.5\\
+0 & 0 & 0 & -0.5 & 1
+\end{bmatrix} *  \begin{bmatrix}
+V(A)\\
+V(B)\\
+V(C)\\
+V(D)\\
+V(E)
+\end{bmatrix} =
+    \begin{bmatrix}
+0\\
+0\\
+0\\
+0\\
+0.5
+\end{bmatrix}
+\newline
+
+    This system of linear equations can be solved using linear algebra.
+
+    \subsection{Question}
+
+    Design an off-policy version of the TD(0) update that can be used with arbitrary target policy $\pi$ and covering behavior policy b, using at each step t the importance sampling ratio $\rho_{t:t}$  (5.3).
+
+    \subsection*{Answer}
+
+    Equation 5.4 shows how state value function is defined in the off-policy case.
+
+    $ E[  \rho_{t:T-1} G_{t} | S_t=s ] = v_{\pi}(s) $
+    \newline
+
+    TD(0) update rule from 6.2 is:
+
+    $V(S_t) = V(S_t) + \alpha [ R_{t+1} + \gamma V(S_{t+1}) -V(S_t) ]  $
+    \newline
+
+    In the off-policy case, the update rule becomes:
+
+    $V(S_t) = V(S_t) + \alpha [ \rho_{t:t} ( R_{t+1} + \gamma V(S_{t+1}) ) -V(S_t) ]  $
+
+    \subsection{Question}
+    Show that an action-value version of (6.6) holds for the action-value form of the TD error t = R t+1 + Q(S t+1 , A t+1 ) Q(S t , A t ), again assuming that the values don’t change from step to step.
+
+    \subsection*{Answer}
+
+    $ G_t-Q(S_t,a_t) = R_{t+1} + \gamma G_{t+1} - Q(S_t,a_t) + \gamma Q(S_{t+1},a_{t+1}) - \gamma Q(S_{t+1},a_{t+1}) $
+    \newline
+    $ G_t-Q(S_t,a_t) = \delta_t + \gamma (G_{t+1} - Q(S_{t+1},a_{t+1}) ) $
+    \newline
+    $ G_t-Q(S_t,a_t) = \delta_t + \gamma \delta_{t+1} + \gamma^2 (G_{t+2} - Q(S_{t+2},a_{t+2}) )  $
+    \newline
+    $ G_t-Q(S_t,a_t) = \vdots$
+    \newline
+    $ G_t-Q(S_t,a_t) =  \sum_{k=t}^{T-1} \gamma^{k-t} \delta_k  $
 
 \end{document}
+
+
