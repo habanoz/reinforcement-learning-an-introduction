@@ -283,14 +283,11 @@ V(E)
 
     Regular 4 actions.
 
-
-
     \includegraphics[scale=0.4]{figure_6_3_ex_6_9_a}
     \includegraphics[scale=0.4]{figure_6_3_ex_6_9_a_grid}
 
     8 actions.
     Episode lengths became significantly shorter than the regular 4 actions.
-
 
     \includegraphics[scale=0.4]{figure_6_3_ex_6_9_b}
     \includegraphics[scale=0.4]{figure_6_3_ex_6_9_b_grid}
@@ -308,6 +305,61 @@ V(E)
 
     \includegraphics[scale=0.4]{figure_6_3_ex_6_10}
     \includegraphics[scale=0.4]{figure_6_3_ex_6_10_grid}
+
+    \subsection{Question}
+
+    Why is Q-learning considered an off-policy control method?
+
+    \subsection*{Answer}
+
+    off-policy methods evaluate or improve a policy different from that used to generate the data.
+
+    In Q-learning actions generated using a policy derived from Q e.g. using $\epsilon-greedy$.
+    Updates are generated using max function with respect to current Q function.
+
+    \subsection{Question}
+
+    Suppose action selection is greedy.
+    Is Q-learning then exactly the same algorithm as Sarsa?
+    Will they make exactly the same action selections and weight updates?
+
+    \subsection*{Answer}
+
+    The update rules become similar.
+    However, the algorithms are different.
+    In SARSA the action used in update rule is used again in next loop.
+    In Q-learning the action in update rule is not used again in next loop.
+    Newly selection action, even-tough it is selected greedily, it may be different because Q function is updated.
+
+    \subsection{Question}
+
+    What are the update equations for Double Expected Sarsa with an $\epsilon$-greedy target policy?
+
+    \subsection*{Answer}
+
+    Equation 6.9 gives update rule for expected SARSA.
+    \newline
+
+    $ Q(S_t, A_t) =  Q(S_t, A_t) + \alpha [ R_{t+1} + \gamma E_{\pi} [ Q(S_{t+1}, A_{t+1}) | S_{t+1}] - Q(S_t, A_t) ] $
+    \newline
+
+    In double expected SARSA there will be two policy to select actions $\pi_1$ and $\pi_2$  with their respective action value functions $Q_1$ and $Q_2$.
+    \newline
+
+    $ Q_1(S_t, A_t) =  Q_1(S_t, A_t) + \alpha [ R_{t+1} + \gamma E_{\pi_2} [ Q_2(S_{t+1}, A_{t+1}) | S_{t+1}] - Q_1(S_t, A_t) ] $
+    \newline
+
+    $ Q_2(S_t, A_t) =  Q_2(S_t, A_t) + \alpha [ R_{t+1} + \gamma E_{\pi_1} [ Q_1(S_{t+1}, A_{t+1}) | S_{t+1}] - Q_2(S_t, A_t) ] $
+
+
+    \subsection{Question}
+
+    Describe how the task of Jack’s Car Rental (Example 4.2) could be reformulated in terms of afterstates.
+    Why, in terms of this specific task, would such a  reformulation be likely to speed convergence?
+
+    \subsection*{Answer}
+
+
 
 \end{document}
 
