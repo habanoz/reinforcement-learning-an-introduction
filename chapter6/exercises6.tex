@@ -359,6 +359,16 @@ V(E)
 
     \subsection*{Answer}
 
+    In car rental problem next state is known after moving some number of cars from one car park to another.
+    Having 4 cars and moving 2 cars would result in 6 cars in a car park.
+    Also having 5 cars and moving 1 car would result in 6 cars in a car park.
+    Both state action pairs should have the same value.
+    Instead the problem can be formulated using after states such that the car park starts the day with 6 cars without considering how many cars moved.
+
+    Such reformulation is likely to speed convergence because number of states to evaluate is decreased.
+    Number of cars moved is removed from the equation thus much fewer samples are needed.
+
+
 
 
 \end{document}
