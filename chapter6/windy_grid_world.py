@@ -5,6 +5,8 @@
 # Permission given to modify the code as long as you keep this        #
 # declaration at the top                                              #
 #######################################################################
+# Modified by @habanoz to answer exercise 6.9 and 6.10.
+#######################################################################
 
 import numpy as np
 import matplotlib
