@@ -43,6 +43,7 @@
     $G_{t:t+n} - V(S_t) = \sum_{k=t}^{t+n-1} \gamma^{k-t} \delta_k  $
 
     \subsection{Question}
+
     (programming) With an n-step method, the value estimates do change from step to step, so an algorithm that used the sum of TD errors (see previous exercise) in place of the error in (7.2) would actually be a slightly different algorithm.
     Would it be a better algorithm or a worse one?
     Devise and program a small experiment to answer this question empirically.
@@ -56,6 +57,22 @@
     Using sum of TD errors as in place of the error in 7.2 performs worse in all n and $\alpha$ values.
 
     \includegraphics[scale=1]{figure_7_2}
+
+    \subsection{Question}
+
+    Why do you think a larger random walk task (19 states instead of 5) was used in the examples of this chapter?
+    Would a smaller walk have shifted the advantage to a different value of n?
+    How about the change in left-side outcome from 0 to -1 made in the larger walk?
+    Do you think that made any difference in the best value of n?
+
+    \subsection*{Answer}
+
+    If n-step size is close to or bigger than the average number steps to complete an episode then the algorithm approaches to MC which involves variance.
+    Using 19 states increases average number of steps to complete an episode thus helps to show how n-step size effects the algorithm.
+
+    If number of states was 5, optimum n-step size would be smaller.
+
+
 
 \end{document}
 
