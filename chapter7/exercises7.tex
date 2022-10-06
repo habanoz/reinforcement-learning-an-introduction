@@ -71,6 +71,21 @@
     Using 19 states increases average number of steps to complete an episode thus helps to show how n-step size effects the algorithm.
 
     If number of states was 5, optimum n-step size would be smaller.
+    An empiric study shows that if return value -1 is used with 5 states, most optimum n value would be 1.
+
+    \includegraphics[scale=0.4]{figure_7_3_5states_ret-1}
+
+    Randomwalk with 5 states and reward of 0 on the left, results are found to be different from the -1 case.
+    We can interpolate and conclude that changing the return value may affect the result.
+
+    \includegraphics[scale=0.4]{figure_7_3_5states_ret0}
+
+    \subsection{Question}
+
+    Prove that the n-step return of Sarsa (7.4) can be written exactly in terms of a novel TD error.
+
+    \subsection*{Answer}
+
 
 
 
