@@ -86,8 +86,43 @@
 
     \subsection*{Answer}
 
+    Given expression:
+    \newline
+    $ G_{t:t+n} = Q_{t-1}(S_t , A_t) + \sum_{ k=t}^{\min(t+n, T) - 1} \gamma^{k-t} [R_{k+1} + \gamma Q_{k}(S_{k+1} , A_{k+1}) - Q_{k-1}(S_{k} , A_{k}) ]  $
+    \newline
 
+    Can be expanded for n:
+    \newline
+    $ G_{t:t+n} = Q_{t-1}(S_t , A_t) + \gamma^{0} [R_{t+1} + \gamma Q_{t}\quad(S_{t+1} , A_{t+1}) - Q_{t-1}(S_{t} , A_{t}) ] $
 
+    $  \qquad\qquad\qquad\qquad\  + \gamma^{1} [R_{t+2} + \gamma Q_{t+1}(S_{t+2} , A_{t+2}) - Q_{t}\ \ (S_{t+1} , A_{t+1}) ] $
+
+    $  \qquad\qquad\qquad\qquad\  + \gamma^{2} [R_{t+3} + \gamma Q_{t+2}(S_{t+3} , A_{t+3}) - Q_{t+1}(S_{t+2} , A_{t+2}) ] $
+
+    $ \dots $
+
+     $  \qquad\qquad\qquad\qquad\  + \gamma^{n-1} [R_{t+n} + \gamma Q_{t+n-1}(S_{t+n} , A_{t+n}) - Q_{t+n-2}(S_{t+n-2} , A_{t+n-2}) ] $
+
+    $\gamma$ distributed:
+     \newline
+    $ G_{t:t+n} = Q_{t-1}(S_t , A_t) + \quad R_{t+1} + \gamma Q_{t}\quad(S_{t+1} , A_{t+1}) - Q_{t-1}(S_{t} , A_{t})  $
+
+    $  \qquad\qquad\qquad\qquad\  + \gamma \ R_{t+2} + \gamma^2 Q_{t+1}(S_{t+2} , A_{t+2}) - \gamma Q_{t}(S_{t+1} , A_{t+1}) ] $
+
+    $  \qquad\qquad\qquad\qquad\  + \gamma^{2} R_{t+3} + \gamma^{3} Q_{t+2}(S_{t+3} , A_{t+3}) - \gamma^{2} Q_{t+1}(S_{t+2} , A_{t+2}) ] $
+
+    $ \dots $
+
+     $  \qquad\qquad\qquad\qquad\  + \gamma^{n-1} R_{t+n} + \gamma^{n} Q_{t+n-1}(S_{t+n} , A_{t+n}) - \gamma^{n-1} Q_{t+n-2}(S_{t+n-2} , A_{t+n-2}) ] $
+
+    After $\gamma$ distribution diagonal $\gamma Q_{k}(S_{k+1} , A_{k+1}) $ and $ Q_{k-1}(S_{k} , A_{k}) $ terms cancel out.
+    \newline
+    $ G_{t:t+n} = Q_{t-1}(S_t , A_t) + R_{t+1} - Q_{t-1}(S_{t} , A_{t}) + \gamma^{n-1} R_{t+n} + \gamma^{n} Q_{t+n-1}(S_{t+n} , A_{t+n}) $
+    \newline
+    $ G_{t:t+n} = R_{t+1} + \gamma R_{t+2} + \dots + \gamma^{n-1} R_{t+n} + \gamma^{n} Q_{t+n-1}(S_{t+n} , A_{t+n}) $
+    \newline
+
+    Finally we obtain n-step return of Sarsa (7.4), proved.
 
 \end{document}
 
