@@ -124,6 +124,52 @@
 
     Finally we obtain n-step return of Sarsa (7.4), proved.
 
+    \subsection{Question}
+
+    Write the pseudocode for the off-policy state-value prediction algorithm described above.
+
+    \subsection*{Answer}
+
+    The pseudo-code for "n-step TD for estimating" modified which reflects equation 7.2.
+
+    Return is calculated as defined in equation 7.13.
+
+    \includegraphics[scale=1]{figure_7_5}
+
+    \subsection{Question}
+
+    Prove that the control variate in the above equations does not change the expected value of the return.
+
+    \subsection*{Answer}
+
+    We have $ E[\rho_t] = E[\frac{\pi(A_t|S_t)}{b(A_t|S_t)}] = 1 $ from 5.13.
+
+    \noindent Equation 7.14:
+
+    \noindent $ G_{t:h} = R_{t+1} \gamma \rho_{t+1} ( G_{t+1:h} - Q_{h-1}(S_{t+1}, A_{t+1}) + \gamma \bar{V}_{h-1}(S_{t+1}) ) $
+
+    \noindent The expected value is:
+
+    \noindent $ E[G_{t:h}] = E [R_{t+1} + \gamma \rho_{t+1} ( G_{t+1:h} - Q_{h-1}(S_{t+1}, A_{t+1}) )+ \gamma \bar{V}_{h-1}(S_{t+1}) ] $
+
+    \noindent Using Linearity of expectation and 5.13:
+
+    \noindent $ E[G_{t:h}] = E [R_{t+1}] + \gamma E[( G_{t+1:h} - Q_{h-1}(S_{t+1}, A_{t+1}) )] + \gamma E[\bar{V}_{h-1}(S_{t+1})] $
+
+    \noindent $ E[G_{t:h}] = E [R_{t+1}] + \gamma E[G_{t+1:h}] - \gamma E[Q_{h-1}(S_{t+1}, A_{t+1}) ] + \gamma E[\bar{V}_{h-1}(S_{t+1})] $
+
+    \noindent Using 7.8:
+
+    \noindent $ E[G_{t:h}] = E [R_{t+1}] + \gamma E[G_{t+1:h}] - \gamma E[\bar{V}_{h-1}(S_{t+1})] + \gamma E[\bar{V}_{h-1}(S_{t+1})] $
+
+    \noindent $ E[G_{t:h}] = E [R_{t+1}] + \gamma E[G_{t+1:h}] $
+
+    \noindent $ E[G_{t:h}] = E [R_{t+1} + \gamma G_{t+1:h}] $
+
+    \noindent Using 7.12:
+
+    \noindent $ E[G_{t:h}] = E[G_{t:h}] $
+
 \end{document}
 
 
