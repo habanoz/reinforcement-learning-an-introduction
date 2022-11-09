@@ -10,7 +10,10 @@
 
 \usepackage{graphicx}
 \usepackage{amssymb}
+\usepackage{bm}
+
 \graphicspath{ {../images/} }
+
 
 % Document
 \begin{document}
@@ -169,6 +172,90 @@
     \noindent Using 7.12:
 
     \noindent $ E[G_{t:h}] = E[G_{t:h}] $
+
+
+    \subsection{Question}
+
+    Write the pseudocode for the off-policy action-value prediction algorithm described immediately above.
+
+    \subsection*{Answer}
+
+    The pseudo-code for "n-step sarsa for estimating" modified which reflects equation 7.11.
+
+    Return is calculated as defined in equation 7.14.
+
+    \includegraphics[scale=1]{figure_7_7}
+
+
+    \subsection{Question}
+
+    Show that the general (off-policy) version of the n-step return (7.13) can still be written exactly and compactly as the sum of state-based TD errors (6.5) if the  approximate state value function does not change.
+
+    \subsection*{Answer}
+
+    Equation 7.13:
+
+    $ G_{t:h} =  \rho_t (R_{t+1} + \gamma G_{t+1:h} ) + (1 - \rho_t) V_{h-1}(S_t) $
+
+    \noindent Assuming state value function does not change.
+
+    \noindent $ G_{t:h} = \rho_t (R_{t+1} + \gamma G_{t+1:h} ) + (1 - \rho_t) V(S_t) $
+
+    \noindent $ G_{t:h} = \rho_t (R_{t+1} + \gamma G_{t+1:h} - V(S_t)) + V(S_t)  $
+
+    \noindent $ G_{t:h} = \rho_t (R_{t+1} + \gamma G_{t+1:h} - V(S_t) + \gamma V(S_{t+1}) - \gamma V(S_{t+1})) + V(S_t)  $
+
+    \noindent $ G_{t:h} = \rho_t (R_{t+1} + \gamma V(S_{t+1})- V(S_t)  + \gamma G_{t+1:h} - \gamma V(S_{t+1})) + V(S_t)  $
+
+    \noindent $ G_{t:h} = \rho_t (\delta_t  + \gamma G_{t+1:h} - \gamma V(S_{t+1})) + V(S_t)  $
+
+    \noindent $ G_{t:h} = \rho_t (\delta_t  + \gamma (G_{t+1:h} - V(S_{t+1}) )) + V(S_t)  $
+
+    \noindent $ G_{t:h} = \rho_t (\delta_t  + \gamma (   \rho_{t+1} (R_{t+2} + \gamma G_{t+2:h} - V(S_{t+1})) + V(S_{t+1})  - V(S_{t+1}) )) + V(S_t)  $
+
+    \noindent $ G_{t:h} = \rho_t (\delta_t  + \gamma (   \rho_{t+1} (R_{t+2} + \gamma G_{t+2:h} - V(S_{t+1})) )) + V(S_t)  $
+
+    \noindent $ G_{t:h} = \rho_t \delta_t  + \gamma \rho_{t:t+1} \delta_{t+1} + \dots + \gamma^{h-1} \rho_{t:h} (G_{h:h} - V(S_h)) + V(S_t)  $
+
+    \noindent $ G_{t:h} = V(S_t) + \sum_{k=t}^{h-1}  \rho_{t:k} \gamma^{k-t} \delta_k  $
+
+    \subsection{Question}
+
+    Repeat the above exercise for the action version of the off-policy n-step return (7.14) and the Expected Sarsa TD error (the quantity in brackets in Equation 6.9).
+
+    \subsection*{Answer}
+
+    Expected Sarsa TD error (the quantity in brackets in Equation 6.9):
+
+    \noindent $ \delta_{t} = R_{t+1} + \gamma \bar{V}(S_{t+1}) -Q(S_t,A_t) $
+
+    \noindent Equation 7.14:
+
+    \noindent $ G_{t:h} = R_{t+1} + \gamma \rho_{t+1} (G_{t+1:h} - Q(S_{t+1},A_{t+1} )) + \gamma \bar{V}(S_{t+1}) $
+
+    \noindent $ G_{t:h} = R_{t+1} + \gamma \bar{V}(S_{t+1}) -Q(S_t,A_t) + \gamma \rho_{t+1} (G_{t+1:h} - Q(S_{t+1},A_{t+1} ))  + Q(S_t,A_t)  $
+
+    \noindent $ G_{t:h} = \delta_{t} + \gamma \rho_{t+1} (G_{t+1:h} - Q(S_{t+1},A_{t+1} ))  + Q(S_t,A_t) $
+
+    \noindent $ G_{t:h} = \delta_{t} + \gamma \rho_{t+1} ( [ R_{t+2} + \gamma \rho_{t+2} (G_{t+2:h} - Q(S_{t+2},A_{t+2} )) + \gamma \bar{V}(S_{t+2}) ] - Q(S_{t+1},A_{t+1} )) + Q(S_t,A_t)$
+
+    \noindent $ G_{t:h} = \delta_{t} + \gamma \rho_{t+1} (  \delta_{t+1} + \gamma \rho_{t+2} (G_{t+2:h} - Q(S_{t+2},A_{t+2} )) + Q(S_{t+1},A_{t+1}) - Q(S_{t+1},A_{t+1}) ) + Q(S_t,A_t) $
+
+    \noindent $ G_{t:h} = \delta_{t} + \gamma \rho_{t+1} (  \delta_{t+1} + \gamma \rho_{t+2} (G_{t+2:h} - Q(S_{t+2},A_{t+2} ))  ) + Q(S_t,A_t) $
+
+    \noindent $ G_{t:h} = \delta_{t} + \gamma \rho_{t+1} \delta_{t+1} + \gamma^2 \rho_{t+1:t+2} ( G_{t+2:h} - Q(S_{t+2},A_{t+2} ))  + Q(S_t,A_t) $
+
+    \noindent $ G_{t:h} = \delta_{t} + \gamma \rho_{t+1} \delta_{t+1} + \gamma^2 \rho_{t+1:t+2} ( \delta_{t+2} +  G_{t+3:h} - Q(S_{t+3},A_{t+3} )  )  + Q(S_t,A_t) $
+
+    \noindent $ G_{t:h} = \delta_{t} + \gamma \rho_{t+1} \delta_{t+1} + \gamma^2 \rho_{t+1:t+2} \delta_{t+2} +  \gamma^2 \rho_{t+1:t+2} (G_{t+3:h} - Q(S_{t+3},A_{t+3} )  )   + Q(S_t,A_t) $
+
+    \noindent $ G_{t:h} = \delta_{t} + \gamma \rho_{t+1} \delta_{t+1} + \gamma^2 \rho_{t+1:t+2} \delta_{t+2} + \dots + \gamma^{h-t-2} \rho_{t+1:h-2} \delta_{h-2} + \gamma^{h-t-1} \rho_{t+1:h-1} (G_{h:h} - Q(S_{h},A_{h} )  )  + Q(S_t,A_t) $
+
+    \noindent since $ G_{h:h} = Q(S_h,A_h) $
+
+    \noindent $ G_{t:h} = \delta_{t} + \gamma \rho_{t+1} \delta_{t+1} + \gamma^2 \rho_{t+1:t+2} \delta_{t+2} + \dots +  \gamma^{h-t-2} \rho_{t+1:h-2} \delta_{h-2} + Q(S_t,A_t) $
+
+    \noindent $ G_{t:h} = Q(S_t,A_t) + \sum_{k=t}^{h-2} \gamma^{k-t} \rho_{t+1:k} \delta_k $ (given $ \rho_{t:h} = 1$ if $ t>h $ )
 
 \end{document}
 
