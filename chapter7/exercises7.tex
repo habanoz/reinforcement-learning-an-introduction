@@ -277,6 +277,78 @@
 
     However, the simpler TD seems to work better thus more data efficient.
 
+     \subsection{Question}
+
+    Show that if the approximate action values are unchanging, then the tree-backup return (7.16) can be written as a sum of expectation-based TD errors:
+
+    \subsection*{Answer}
+
+    Equation 7.16:
+
+    \noindent $ G_{t:t+n} = R_{t+1} + \gamma \sum_{a \neq A_{t+1}} \pi(a|S_{t+1}) Q_{t+n-1}(S_{t+1},a) + \gamma \pi(A_{t+1}|S_{t+1}) G_{t+1:t+n} $
+
+    \noindent $ G_{t:t+n} = R_{t+1} + \gamma \bar{V}(S_{t+1}) - \gamma \pi(A_{t+1}|S_{t+1}) Q(S_{t+1},A_{t+1}) + \gamma \pi(A_{t+1}|S_{t+1}) G_{t+1:t+n} $
+
+    \noindent $ G_{t:t+n} = R_{t+1} + \gamma \bar{V}(S_{t+1}) - Q(S_{t},A_{t}) + Q(S_{t},A_{t}) - \gamma \pi(A_{t+1}|S_{t+1}) Q(S_{t+1},A_{t+1}) + \gamma \pi(A_{t+1}|S_{t+1}) G_{t+1:t+n} $
+
+    \noindent $ G_{t:t+n} = \delta_{t} + Q(S_{t},A_{t}) - \gamma \pi(A_{t+1}|S_{t+1}) Q(S_{t+1},A_{t+1}) + \gamma \pi(A_{t+1}|S_{t+1}) G_{t+1:t+n} $
+
+    We will use the above form to replace future G values in subsequent equations.
+
+    \noindent $ G_{t:t+n} = \delta_{t} + Q(S_{t},A_{t}) - \gamma \pi(A_{t+1}|S_{t+1}) Q(S_{t+1},A_{t+1}) + \gamma \pi(A_{t+1}|S_{t+1}) (\delta_{t+1} + Q(S_{t+1},A_{t+1}) - \gamma \pi(A_{t+2}|S_{t+2}) Q(S_{t+2},A_{t+2}) + \gamma \pi(A_{t+2}|S_{t+2}) G_{t+2:t+n}) $
+
+    \noindent $ G_{t:t+n} = \delta_{t} + Q(S_{t},A_{t}) + \gamma \pi(A_{t+1}|S_{t+1}) (\delta_{t+1} - \gamma \pi(A_{t+2}|S_{t+2}) Q(S_{t+2},A_{t+2}) + \gamma \pi(A_{t+2}|S_{t+2}) G_{t+2:t+n})  $
+
+    \noindent $ G_{t:t+n} = Q(S_{t},A_{t}) + \delta_{t} + \gamma \pi(A_{t+1}|S_{t+1}) \delta_{t+1} + \gamma \pi(A_{t+1}|S_{t+1}) (- \gamma \pi(A_{t+2}|S_{t+2}) Q(S_{t+2},A_{t+2}) + \gamma \pi(A_{t+2}|S_{t+2}) G_{t+2:t+n}) $
+
+    \noindent $ G_{t:t+n} = Q(S_{t},A_{t}) + \delta_{t} + \gamma \pi(A_{t+1}|S_{t+1}) \delta_{t+1} - \gamma^2 \pi(A_{t+1}|S_{t+1}) \pi(A_{t+2}|S_{t+2}) Q(S_{t+2},A_{t+2}) + \gamma^2 \pi(A_{t+1}|S_{t+1}) \pi(A_{t+2}|S_{t+2}) G_{t+2:t+n} $
+
+    Replace G one more time.
+
+    \noindent $ G_{t:t+n} = Q(S_{t},A_{t}) + \delta_{t} + \gamma \pi(A_{t+1}|S_{t+1}) \delta_{t+1} - \gamma^2 \pi(A_{t+1}|S_{t+1}) \pi(A_{t+2}|S_{t+2}) Q(S_{t+2},A_{t+2}) + \gamma^2 \pi(A_{t+1}|S_{t+1}) \pi(A_{t+2}|S_{t+2}) [\delta_{t+2} + Q(S_{t+2},A_{t+2}) - \gamma \pi(A_{t+3}|S_{t+3}) Q(S_{t+3},A_{t+3}) + \gamma \pi(A_{t+3}|S_{t+3}) G_{t+3:t+n}] $
+
+    \noindent $ G_{t:t+n} = Q(S_{t},A_{t}) + \delta_{t} + \gamma \pi(A_{t+1}|S_{t+1}) \delta_{t+1} + \gamma^2 \pi(A_{t+1}|S_{t+1}) \pi(A_{t+2}|S_{t+2}) [\delta_{t+2} - \gamma \pi(A_{t+3}|S_{t+3}) Q(S_{t+3},A_{t+3}) + \gamma \pi(A_{t+3}|S_{t+3}) G_{t+3:t+n}] $
+
+    \noindent $ G_{t:t+n} = Q(S_{t},A_{t}) + \delta_{t} + \gamma \pi(A_{t+1}|S_{t+1}) \delta_{t+1} + \gamma^2 \pi(A_{t+1}|S_{t+1}) \pi(A_{t+2}|S_{t+2}) \delta_{t+2} + \gamma^2 \pi(A_{t+1}|S_{t+1}) \pi(A_{t+2}|S_{t+2}) [ - \gamma \pi(A_{t+3}|S_{t+3}) Q(S_{t+3},A_{t+3}) + \gamma \pi(A_{t+3}|S_{t+3}) G_{t+3:t+n}] $
+
+
+        Equation 7.16:
+
+    \noindent $ G_{t:t+n} = R_{t+1} + \gamma \sum_{a \neq A_{t+1}} \pi(a|S_{t+1}) Q_{t+n-1}(S_{t+1},a) + \gamma \pi(A_{t+1}|S_{t+1}) G_{t+1:t+n} $
+
+    \noindent $ G_{t:t+n} = R_{t+1} + \gamma \bar{V}(S_{t+1}) - \gamma \pi(A_{t+1}|S_{t+1}) Q(S_{t+1},A_{t+1}) + \gamma \pi(A_{t+1}|S_{t+1}) G_{t+1:t+n} $
+
+    \noindent $ G_{t:t+n} = R_{t+1} + \gamma \bar{V}(S_{t+1}) - Q(S_{t},A_{t}) + Q(S_{t},A_{t}) - \gamma \pi(A_{t+1}|S_{t+1}) Q(S_{t+1},A_{t+1}) + \gamma \pi(A_{t+1}|S_{t+1}) G_{t+1:t+n} $
+
+    \noindent $ G_{t:t+n} = \delta_{t} + Q(S_{t},A_{t}) - \gamma \pi(A_{t+1}|S_{t+1}) Q(S_{t+1},A_{t+1}) + \gamma \pi(A_{t+1}|S_{t+1}) G_{t+1:t+n} $
+
+    \noindent $ G_{t:t+n} = Q(S_{t},A_{t}) + \delta_{t} + \gamma \pi(A_{t+1}|S_{t+1})( G_{t+1:t+n} - Q(S_{t+1},A_{t+1})) $
+
+    We will use the above form to replace future G values in subsequent equations.
+
+    \noindent $ G_{t:t+n} = Q(S_{t},A_{t}) + \delta_{t} + \gamma \pi(A_{t+1}|S_{t+1})( \delta_{t+1} + Q(S_{t+1},A_{t+1}) + \gamma \pi(A_{t+2}|S_{t+2})( G_{t+2:t+n} - Q(S_{t+2},A_{t+2})) - Q(S_{t+1},A_{t+1}) ) $
+
+    \noindent $ G_{t:t+n} = Q(S_{t},A_{t}) + \delta_{t} + \gamma \pi(A_{t+1}|S_{t+1})( \delta_{t+1} + \gamma \pi(A_{t+2}|S_{t+2})( G_{t+2:t+n} - Q(S_{t+2},A_{t+2})) ) $
+
+    \noindent $ G_{t:t+n} = Q(S_{t},A_{t}) + \delta_{t} + \gamma \pi(A_{t+1}|S_{t+1}) \delta_{t+1} +\gamma^2 \pi(A_{t+1}|S_{t+1}) \pi(A_{t+2}|S_{t+2})( G_{t+2:t+n} - Q(S_{t+2},A_{t+2}))  $
+
+
+    Replace G one more time.
+
+    \noindent $ G_{t:t+n} = Q(S_{t},A_{t}) + \delta_{t} + \gamma \pi(A_{t+1}|S_{t+1}) \delta_{t+1} +\gamma^2 \pi(A_{t+1}|S_{t+1}) \pi(A_{t+2}|S_{t+2})( Q(S_{t+2},A_{t+2}) + \delta_{t+2} + \gamma \pi(A_{t+3}|S_{t+3})( G_{t+3:t+n} - Q(S_{t+3},A_{t+3})) - Q(S_{t+2},A_{t+2}))  $
+
+    \noindent $ G_{t:t+n} = Q(S_{t},A_{t}) + \delta_{t} + \gamma \pi(A_{t+1}|S_{t+1}) \delta_{t+1} +\gamma^2 \pi(A_{t+1}|S_{t+1}) \pi(A_{t+2}|S_{t+2})( \delta_{t+2} + \gamma \pi(A_{t+3}|S_{t+3})( G_{t+3:t+n} - Q(S_{t+3},A_{t+3})))  $
+
+    \noindent $ G_{t:t+n} = Q(S_{t},A_{t}) + \delta_{t} + \gamma \pi(A_{t+1}|S_{t+1}) \delta_{t+1} + \gamma^2 \pi(A_{t+1}|S_{t+1}) \pi(A_{t+2}|S_{t+2}) \delta_{t+2} + \gamma^3 \pi(A_{t+1}|S_{t+1}) \pi(A_{t+2}|S_{t+2}) \pi(A_{t+3}|S_{t+3})( G_{t+3:t+n} - Q(S_{t+3},A_{t+3}))  $
+
+    G term will continue expanding at most n times until $ G_{t+n:t+n} $  where it will return $ Q(S_{t+n}, A_{t+n}) $ and last term cancels.
+    If $ t=T-1$ it will return $R_t$ .
+
+    Final recursive form will look like:
+
+    \noindent $ G_{t:t+n} = Q(S_{t},A_{t}) + \sum_{i=t}^{\min(t+n,T-1)} \gamma^{i-t} \delta_{i} + \prod_{k=t+1}^{i} \pi(A_{k}|S_{k})   $
+
+
 
 \end{document}
 
