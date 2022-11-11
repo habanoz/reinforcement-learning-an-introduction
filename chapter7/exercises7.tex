@@ -257,6 +257,27 @@
 
     \noindent $ G_{t:h} = Q(S_t,A_t) + \sum_{k=t}^{h-2} \gamma^{k-t} \rho_{t+1:k} \delta_k $ (given $ \rho_{t:h} = 1$ if $ t>h $ )
 
+
+    \subsection{Question}
+
+    (programming) Devise a small off-policy prediction problem and use it to show that the off-policy learning algorithm using (7.13) and (7.2) is more data efficient than the simpler algorithm using (7.1) and (7.9).
+
+    \subsection*{Answer}
+
+    Data efficiency is measured by looking at how fast state values converges.
+    All state values are summed and averaged.
+    The chart below shows average state value at episode for the simple and sophisticated approaches.
+
+    \includegraphics[scale=0.5]{figure_7_10}
+
+    My experimental finding is that: The sophisticated approach suffers from the control variate.
+    When an action is optimal and not favored by the random policy (e.g. $ \rho_t = 1.0/0.5 = 2 $), resulting importance sampling ratio signifies not only the return term but also the control variate.
+    This makes the returns fluctuate.
+    This may be due to an implementation or setup error.
+
+    However, the simpler TD seems to work better thus more data efficient.
+
+
 \end{document}
 
 
