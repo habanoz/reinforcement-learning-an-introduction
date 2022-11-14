@@ -10,8 +10,8 @@ import pygame
 class GridWorldEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 10}
 
-    def __init__(self, render_mode=None, initial_agent_position=None, target_position=None, blocks=None, blocks2=None, width=9,
-                 height=6):
+    def __init__(self, render_mode=None, initial_agent_position=None, target_position=None, blocks=None, blocks2=None, columns=9,
+                 rows=6):
 
         self.initial_agent_position = np.array(initial_agent_position if initial_agent_position else [0, 0])
         self.target_position = np.array(target_position if target_position else [8, 0])
@@ -20,19 +20,19 @@ class GridWorldEnv(gym.Env):
 
         self.blocks = np.array(self.blocks1)
 
-        self.width = width  # The size of the square grid
-        self.height = height
+        self.width = columns  # The size of the square grid
+        self.height = rows
 
         self.window_size_width = 512  # The size of the PyGame window
-        self.window_size_height = 512 * height / width  # The size of the PyGame window
-        self.tile_size = self.window_size_width / width
+        self.window_size_height = 512 * rows / columns  # The size of the PyGame window
+        self.tile_size = self.window_size_width / columns
 
         # Observations are dictionaries with the agent's and the target's location.
         # Each location is encoded as an element of {0, ..., `size`}^2, i.e. MultiDiscrete([size, size]).
         self.observation_space = spaces.Dict(
             {
-                "agent": spaces.Box(np.array([0, 0]), np.array([width - 1, height - 1]), shape=(2,), dtype=int),
-                "target": spaces.Box(np.array([0, 0]), np.array([width - 1, height - 1]), shape=(2,), dtype=int),
+                "agent": spaces.Box(np.array([0, 0]), np.array([columns - 1, rows - 1]), shape=(2,), dtype=int),
+                "target": spaces.Box(np.array([0, 0]), np.array([columns - 1, rows - 1]), shape=(2,), dtype=int),
             }
         )
 

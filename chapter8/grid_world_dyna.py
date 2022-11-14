@@ -11,8 +11,9 @@ from chapter8.grid_world import GridWorldEnv
 
 
 class DynaParams:
-    def __init__(self, runs=20, planning_steps=10):
+    def __init__(self, runs=50, max_steps=3000, planning_steps=10):
         self.runs = runs
+        self.max_steps = max_steps
         self.planning_steps = planning_steps
         self.epsilon = 0.1
         self.gamma = 0.95
@@ -45,17 +46,19 @@ class TimeDynaModel(RegularDynaModel):
         self.time = -1
 
     def feed(self, s, a, r, sp):
-        self.time += 1
         super().feed(s, a, r, sp)
+        self.time += 1
         self.tau[(s, a)] = self.time
 
     def sample(self):
         s, a, r, sp = super().sample()
-        return s, a, r + self.kappa * np.sqrt(self.time - self.tau[(s, a)]), sp
+        r+=self.kappa * np.sqrt(self.time - self.tau[(s, a)])
+        return s, a, r, sp
+        #return s, a, r , sp
 
 
 def start():
-    env = GridWorldEnv(initial_agent_position=[3, 5], width=9, height=6,
+    env = GridWorldEnv(initial_agent_position=[3, 5], columns=9, rows=6,
                        blocks=[[i, 3] for i in range(0, 8)], blocks2=[[i, 3] for i in range(1, 9)],
                        render_mode=None
                        # render_mode="human"
@@ -90,21 +93,25 @@ def start():
     plt.close()
 
 
-def run_dyna(env, dyna_params, model, initial_seed=None):
+def run_dyna(env, dyna_params, model, initial_seed=2023):
     q = defaultdict(float)
 
-    reward_hist = []
-    episode_length = 0
-    episode_lengths = []
+    reward_hist = np.zeros((dyna_params.runs, dyna_params.max_steps))
+    episode_lengths = np.zeros((dyna_params.runs, 200))
+
 
     sp = env.reset(seed=initial_seed)[0]['agent']
     sp = tuple(sp)
 
-    for run in tqdm.tqdm(range(1, dyna_params.runs + 1)):
+    for run in tqdm.tqdm(range(dyna_params.runs)):
         reward_sum = 0
+        episode_count = 0
+        episode_length = 0
+        episode_length_sum = 0
+
         env.switchBlocks1()
 
-        for t in range(3000):
+        for t in range(dyna_params.max_steps):
             # a) s = current (non-terminal) state
             s = sp
 
@@ -122,12 +129,18 @@ def run_dyna(env, dyna_params, model, initial_seed=None):
             sp = obs['agent']
             sp = tuple(sp)
 
-            reward_sum += r
-            if len(reward_hist) <= t:
-                reward_hist.append(reward_sum)
-            else:
-                # incremental average
-                reward_hist[t] = reward_hist[t] + (reward_sum - reward_hist[t]) / run
+            # reward_sum += r
+            # if len(reward_hist) <= t:
+            #     reward_hist.append(reward_sum)
+            # else:
+            #     # incremental average
+            #     reward_hist[t] = reward_hist[t] + (reward_sum - reward_hist[t]) / run
+
+            if done:
+                reward_sum += 1
+
+            reward_hist[run, t] = reward_sum
+
 
             # d) Q(S,A) = Q(S,A) + alpha [R + gamma * maxa Q(sp,a) - Q(S,A)]
             next_q_values = map(lambda x: q[(sp, x)], list(range(env.action_space.n)))
@@ -145,18 +158,22 @@ def run_dyna(env, dyna_params, model, initial_seed=None):
                 q[(sr, ar)] = q[(sr, ar)] + dyna_params.alpha * (
                         rr + dyna_params.gamma * max(next_q_values) - q[(sr, ar)])
 
+            episode_length += 1
+
             if done:
                 sp = env.reset()[0]['agent']
                 sp = tuple(sp)
-                episode_lengths.append(episode_length)
+                episode_length_sum +=episode_length
+                episode_lengths[run, episode_count]=episode_length_sum
                 episode_length = 0
-            else:
-                episode_length += 1
+                episode_count +=1
 
             if t == 1000:
                 env.switchBlocks2()
 
-        episode_lengths.append(episode_length)
+
+    reward_hist = reward_hist.mean(axis=0)
+    episode_lengths = episode_lengths.mean(axis=0)
 
     return reward_hist, episode_lengths
 
