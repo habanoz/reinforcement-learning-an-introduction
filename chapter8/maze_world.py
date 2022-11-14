@@ -1,3 +1,7 @@
+####
+# huseyinabanox@gmail.com 2022
+##
+
 import sys
 
 import gymnasium as gym
@@ -7,7 +11,7 @@ import numpy as np
 import pygame
 
 
-class GridWorldEnvRowFirst(gym.Env):
+class MazeWorld(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 10}
 
     def __init__(self, render_mode=None, initial_agent_position=None, target_position=None, blocks=None, blocks2=None, columns=9,
