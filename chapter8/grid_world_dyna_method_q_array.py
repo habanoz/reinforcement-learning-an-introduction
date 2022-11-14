@@ -1,5 +1,19 @@
 import random
-from collections import defaultdict
+# Check whether state-action values are already optimal
+def check_path(q_values, maze):
+    # get the length of optimal path
+    # 14 is the length of optimal path of the original maze
+    # 1.2 means it's a relaxed optifmal path
+    max_steps = 14 * maze.resolution * 1.2
+    state = maze.START_STATE
+    steps = 0
+    while state not in maze.GOAL_STATES:
+        action = np.argmax(q_values[state[0], state[1], :])
+        state, _ = maze.step(state, action)
+        steps += 1
+        if steps > max_steps:
+            return False
+    return True
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,7 +23,7 @@ from chapter8.grid_world_row_first import GridWorldEnvRowFirst
 
 
 class DynaParams:
-    def __init__(self, runs=50, max_steps=3000, planning_steps=10):
+    def __init__(self, runs=20, max_steps=3000, planning_steps=10):
         self.runs = runs
         self.max_steps = max_steps
         self.planning_steps = planning_steps
@@ -36,7 +50,7 @@ class RegularDynaModel:
         return s, a, r, sp
 
 
-class TimeDynaModel(RegularDynaModel):
+class TimeDynaModel():
     def __init__(self, kappa=1e-4):
         super().__init__()
         self.kappa = kappa
@@ -78,8 +92,6 @@ def start():
                                # render_mode="human"
                                )
 
-    env.render()
-
     reward_hist, episode_lengths = run_dyna(env, dyna_params=DynaParams(), model=RegularDynaModel())
     reward_hist2, episode_lengths2 = run_dyna(env, dyna_params=DynaParams(), model=TimeDynaModel())
 
@@ -102,92 +114,97 @@ def start():
     plt.legend()
 
     # plt.show()
-    plt.savefig('../images/figure_8_4_grid_world_dyna.png')
+    plt.savefig('../images/figure_8_4_grid_world_dyna_method_q_array.png')
 
     # plt.savefig('./images/figure_2_4.png')
     plt.close()
 
 
 def run_dyna(env, dyna_params, model, initial_seed=None):
-    q = defaultdict(float)
+    q = np.zeros(env.q_size)
 
     reward_hist = np.zeros((dyna_params.runs, dyna_params.max_steps))
     episode_lengths = np.zeros((dyna_params.runs, 200))
 
-    sp = env.reset(seed=initial_seed)[0]['agent']
-    sp = tuple(sp)
-
     for run in tqdm.tqdm(range(dyna_params.runs)):
-        reward_sum = 0
-        episode_count = 0
-        episode_length = 0
-        episode_length_sum = 0
+        steps = 0
+        last_steps = 0
+        episodes = 0
+        cumulative_episode_length = 0
 
         env.switchBlocks1()
+        switched2 = False
 
-        for t in range(dyna_params.max_steps):
-            # a) s = current (non-terminal) state
-            s = sp
+        while steps < dyna_params.max_steps:
+            steps += dyna_q(dyna_params, env, model, q)
 
-            # b) A epsilon-greedy(S, Q)
-            if np.random.random_sample() > dyna_params.epsilon:
-                q_values = list(map(lambda x: q[(s, x)], list(range(env.action_space.n))))
-                q_values_array = np.array(q_values)
-                a = np.random.choice(np.where(q_values_array == q_values_array.max())[0])
-            else:
-                a = np.random.randint(0, env.action_space.n)
+            cumulative_episode_length += steps
 
-            # c) take action a and observe reward r, next state sp
-            obs, r, done, _, _ = env.step(a)
+            reward_hist[run, last_steps: steps] = reward_hist[run, last_steps]
+            reward_hist[run, min(steps, dyna_params.max_steps - 1)] = reward_hist[run, last_steps] + 1
+            episode_lengths[run, episodes] = cumulative_episode_length
 
-            sp = obs['agent']
-            sp = tuple(sp)
 
-            # reward_sum += r
-            # if len(reward_hist) <= t:
-            #     reward_hist.append(reward_sum)
-            # else:
-            #     # incremental average
-            #     reward_hist[t] = reward_hist[t] + (reward_sum - reward_hist[t]) / run
+            last_steps = steps
+            episodes += 1
 
-            if done:
-                reward_sum += 1
-
-            reward_hist[run, t] = reward_sum
-
-            # d) Q(S,A) = Q(S,A) + alpha [R + gamma * maxa Q(sp,a) - Q(S,A)]
-            next_q_values = map(lambda x: q[(sp, x)], list(range(env.action_space.n)))
-            q[(s, a)] = q[(s, a)] + dyna_params.alpha * (r + dyna_params.gamma * max(next_q_values) - q[(s, a)])
-
-            # e) Model(s,a) = R,sp assuming deterministic environment
-            model.feed(s, a, r, sp)
-
-            # f) loop repeat n times
-            for j in range(dyna_params.planning_steps):
-                # sample transitions from model
-                sr, ar, rr, spr = model.sample()
-                next_q_values = map(lambda x: q[(spr, x)], list(range(env.action_space.n)))
-                # update q values
-                q[(sr, ar)] = q[(sr, ar)] + dyna_params.alpha * (
-                        rr + dyna_params.gamma * max(next_q_values) - q[(sr, ar)])
-
-            episode_length += 1
-
-            if done:
-                sp = env.reset()[0]['agent']
-                sp = tuple(sp)
-                episode_length_sum += episode_length
-                episode_lengths[run, episode_count] = episode_length_sum
-                episode_length = 0
-                episode_count += 1
-
-            if t == 1000:
+            if not switched2 and steps > 1000:
                 env.switchBlocks2()
+                switched2 = True
+
+    ##
 
     reward_hist = reward_hist.mean(axis=0)
     episode_lengths = episode_lengths.mean(axis=0)
 
     return reward_hist, episode_lengths
+
+
+def dyna_q(dyna_params, env, model, q):
+    sp = env.reset()[0]['agent']
+    sp = tuple(sp)
+
+    for t in range(dyna_params.max_steps):
+        # a) s = current (non-terminal) state
+        s = sp
+
+        # b) A epsilon-greedy(S, Q)
+        if np.random.binomial(1, dyna_params.epsilon) == 1:
+            a = np.random.choice(env.action_space.n)
+        else:
+            values = q[s[0], s[1], :]
+            a = np.random.choice([action for action, value in enumerate(values) if value == np.max(values)])
+
+        # c) take action a and observe reward r, next state sp
+        obs, r, done, _, _ = env.step(a)
+
+        sp = obs['agent']
+        sp = tuple(sp)
+
+        # reward_sum += r
+        # if len(reward_hist) <= t:
+        #     reward_hist.append(reward_sum)
+        # else:
+        #     # incremental average
+        #     reward_hist[t] = reward_hist[t] + (reward_sum - reward_hist[t]) / run
+
+        # d) Q(S,A) = Q(S,A) + alpha [R + gamma * maxa Q(sp,a) - Q(S,A)]
+        q[s[0], s[1], a] += dyna_params.alpha * (r + dyna_params.gamma * np.max(q[sp[0], sp[1], :]) - q[s[0], s[1], a])
+
+        # e) Model(s,a) = R,sp assuming deterministic environment
+        model.feed(s, a, r, sp)
+
+        # f) loop repeat n times
+        for j in range(dyna_params.planning_steps):
+            # sample transitions from model
+            sr, ar, rr, spr = model.sample()
+            q[sr[0], sr[1], ar] += dyna_params.alpha * (
+                        rr + dyna_params.gamma * np.max(q[spr[0], spr[1], :]) - q[sr[0], sr[1], ar])
+
+        if done:
+            return t
+
+    return dyna_params.max_steps
 
 
 if __name__ == '__main__':
