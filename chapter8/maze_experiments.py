@@ -103,11 +103,16 @@ class TimeDynaModel(RegularDynaModel):
         a = list(self.model[s])[action_index]
         sp, r, time = self.model[s][a]
 
-        r += self.kappa * np.sqrt(self.time - time)
+        r += self.bonus(s,a)
 
         return s, a, sp, r
 
     def bonus(self, s, a):
+        if s not in self.model:
+            return 0
+        if a not in self.model[s]:
+            return 0
+
         sp, r, time = self.model[s][a]
         return self.kappa * np.sqrt(self.time - time)
 
@@ -122,6 +127,7 @@ class AlternateTimeDynaModel(TimeDynaModel):
 
         action_index = random.choice(range(len(self.model[s].keys())))
         a = list(self.model[s])[action_index]
+
         sp, r, time = self.model[s][a]
 
         return s, a, sp, r
@@ -139,7 +145,7 @@ def dyna_q(q, model, env, dyna_params):
         if np.random.binomial(1, dyna_params.epsilon) == 1:
             a = np.random.choice(env.action_space.n)
         else:
-            values = q[s[0], s[1], :]
+            values = [q[s[0], s[1], a] + model.bonus(s, a) for a in range(env.action_space.n)]
             a = np.random.choice([action for action, value in enumerate(values) if value == np.max(values)])
 
         # c) take action a and observe reward r, next state sp
@@ -177,55 +183,49 @@ def dyna_q(q, model, env, dyna_params):
 # wrapper function for changing maze
 # @maze: a maze instance
 # @dynaParams: several parameters for dyna algorithms
-def changing_maze(maze, dyna_params):
+def changing_maze(maze, dyna_params, model):
     # track the cumulative rewards
-    rewards = np.zeros((dyna_params.runs, 2, dyna_params.max_steps))
-    cumulative_episode_lengths = np.zeros((dyna_params.runs, 2, dyna_params.max_episodes))
+    rewards = np.zeros((dyna_params.runs, dyna_params.max_steps))
+    cumulative_episode_lengths = np.zeros((dyna_params.runs, dyna_params.max_episodes))
 
     for run in tqdm(range(dyna_params.runs)):
-        # set up models
-        models = [RegularDynaModel(), AlternateTimeDynaModel(kappa=dyna_params.time_weight)]
+        q_values = np.zeros(maze.q_size)
 
-        # initialize state action values
-        q_values = [np.zeros(maze.q_size), np.zeros(maze.q_size)]
+        # set old obstacles for the maze
+        maze.switchBlocks1()
+        switched2 = False
 
-        for method in range(len(dyna_params.methods)):
-            # print('run:', run, dyna_params.methods[method])
+        steps = 0
+        last_steps = steps
+        episodes = 0
+        cumulative_episode_length = 0
 
-            # set old obstacles for the maze
-            maze.switchBlocks1()
-            switched2 = False
+        while steps < dyna_params.max_steps:
+            # play for an episode
+            steps += dyna_q(q_values, model, maze, dyna_params)
 
-            steps = 0
+            cumulative_episode_length += steps
+
+            # update cumulative rewards
+            rewards[run, last_steps: steps] = rewards[run, last_steps]
+            rewards[run, min(steps, dyna_params.max_steps - 1)] = rewards[run, last_steps] + 1
+            cumulative_episode_lengths[run, episodes] = cumulative_episode_length
+
             last_steps = steps
-            episodes = 0
-            cumulative_episode_length = 0
 
-            while steps < dyna_params.max_steps:
-                # play for an episode
-                steps += dyna_q(q_values[method], models[method], maze, dyna_params)
+            episodes += 1
 
-                cumulative_episode_length += steps
-
-                # update cumulative rewards
-                rewards[run, method, last_steps: steps] = rewards[run, method, last_steps]
-                rewards[run, method, min(steps, dyna_params.max_steps - 1)] = rewards[run, method, last_steps] + 1
-                cumulative_episode_lengths[run, method, episodes] = cumulative_episode_length
-
-                last_steps = steps
-
-                episodes += 1
-
-                if not switched2 and steps > dyna_params.switch_time:
-                    switched2 = True
-                    # change the obstacles
-                    maze.switchBlocks2()
+            if not switched2 and steps > dyna_params.switch_time:
+                switched2 = True
+                # change the obstacles
+                maze.switchBlocks2()
 
     # averaging over runs
     rewards = rewards.mean(axis=0)
     cumulative_episode_lengths = cumulative_episode_lengths.mean(axis=0)
 
     return rewards, cumulative_episode_lengths
+
 
 # Figure 8.4, BlockingMaze
 def figure_8_4():
@@ -245,26 +245,27 @@ def figure_8_4():
     dyna_params.time_weight = 1e-4
 
     # play
-    rewards, episode_lengths = changing_maze(blocking_maze, dyna_params)
+    rewards, episode_lengths = changing_maze(blocking_maze, dyna_params, RegularDynaModel())
+    rewards2, episode_lengths2 = changing_maze(blocking_maze, dyna_params, TimeDynaModel())
 
     plt.figure(figsize=(10, 10))
 
     plt.subplot(2, 1, 1)
 
-    for i in range(len(dyna_params.methods)):
-        plt.plot(rewards[i, :], label=dyna_params.methods[i])
+    plt.plot(rewards, label="DynaQ")
+    plt.plot(rewards2, label="DynaQ+")
     plt.xlabel('time steps')
     plt.ylabel('cumulative reward')
     plt.legend()
 
     plt.subplot(2, 1, 2)
-    for i in range(len(dyna_params.methods)):
-        plt.plot(episode_lengths[i, :], label=dyna_params.methods[i])
+    plt.plot(episode_lengths, label="DynaQ")
+    plt.plot(episode_lengths2, label="DynaQ+")
     plt.xlabel('Episodes')
     plt.ylabel('Episode Length')
     plt.legend()
 
-    plt.savefig('../images/figure_8_4.png')
+    plt.savefig('../images/example_8_4.png')
     plt.close()
 
 
@@ -318,7 +319,7 @@ def example_8_4():
                               )
 
     # set up parameters
-    dyna_params = DynaParams()
+    dyna_params = DynaParams(max_episodes=500)
     dyna_params.alpha = 1.0
     dyna_params.planning_steps = 10
     dyna_params.runs = 20
@@ -327,31 +328,80 @@ def example_8_4():
     dyna_params.time_weight = 1e-4
 
     # play
-    rewards, episode_lengths = changing_maze(blocking_maze, dyna_params)
+    # play
+    rewards, episode_lengths = changing_maze(blocking_maze, dyna_params, RegularDynaModel())
+    rewards2, episode_lengths2 = changing_maze(blocking_maze, dyna_params, TimeDynaModel())
+    rewards3, episode_lengths3 = changing_maze(blocking_maze, dyna_params, AlternateTimeDynaModel())
 
     plt.figure(figsize=(10, 10))
 
     plt.subplot(2, 1, 1)
 
-    for i in range(len(dyna_params.methods)):
-        plt.plot(rewards[i, :], label=dyna_params.methods[i])
+    plt.plot(rewards, label="DynaQ")
+    plt.plot(rewards2, label="DynaQ+")
+    plt.plot(rewards3, label="DynaQ+A")
     plt.xlabel('time steps')
     plt.ylabel('cumulative reward')
     plt.legend()
 
     plt.subplot(2, 1, 2)
-    for i in range(len(dyna_params.methods)):
-        plt.plot(episode_lengths[i, :], label=dyna_params.methods[i])
+    plt.plot(episode_lengths, label="DynaQ")
+    plt.plot(episode_lengths2, label="DynaQ+")
+    plt.plot(episode_lengths3, label="DynaQ+A")
     plt.xlabel('Episodes')
     plt.ylabel('Episode Length')
     plt.legend()
 
-    plt.savefig('../images/figure_8_4.png')
+    plt.savefig('../images/example_8_4.png')
     plt.close()
 
+
+# Figure 8.4, BlockingMaze
+def example_8_4_2():
+    # set up a blocking maze instance
+    blocking_maze = MazeWorld(initial_agent_position=[3, 5], columns=9, rows=6,
+                              blocks=[[i, 3] for i in range(0, 8)], blocks2=[[i, 3] for i in range(1, 9)],
+                              render_mode=None
+                              )
+
+    dyna_params = DynaParams(max_steps=6000, switch_time=3000, max_episodes=500)
+    dyna_params.alpha = 1.0
+    dyna_params.planning_steps = 50
+    dyna_params.runs = 5
+
+    # kappa must be small, as the reward for getting the goal is only 1
+    dyna_params.time_weight = 1e-3
+
+    # play
+    rewards, episode_lengths = changing_maze(blocking_maze, dyna_params, RegularDynaModel())
+    rewards2, episode_lengths2 = changing_maze(blocking_maze, dyna_params, TimeDynaModel())
+    rewards3, episode_lengths3 = changing_maze(blocking_maze, dyna_params, AlternateTimeDynaModel())
+
+    plt.figure(figsize=(10, 10))
+
+    plt.subplot(2, 1, 1)
+
+    plt.plot(rewards, label="DynaQ")
+    plt.plot(rewards2, label="DynaQ+")
+    plt.plot(rewards3, label="DynaQ+A")
+    plt.xlabel('time steps')
+    plt.ylabel('cumulative reward')
+    plt.legend()
+
+    plt.subplot(2, 1, 2)
+    plt.plot(episode_lengths, label="DynaQ")
+    plt.plot(episode_lengths2, label="DynaQ+")
+    plt.plot(episode_lengths3, label="DynaQ+A")
+    plt.xlabel('Episodes')
+    plt.ylabel('Episode Length')
+    plt.legend()
+
+    plt.savefig('../images/example_8_4_2.png')
+    plt.close()
 
 if __name__ == '__main__':
     # figure_8_2()
     # figure_8_4()
-    figure_8_5()
-    example_8_4()
+    # figure_8_5()
+    # example_8_4()
+    example_8_4_2()

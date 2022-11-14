@@ -19,7 +19,7 @@
 \begin{document}
 
     \maketitle
-    \setcounter{section}{6}
+    \setcounter{section}{7}
 
 
     \section{Exercises}
@@ -47,14 +47,14 @@
 
     Assuming Example 8.2 and 8.3 use the same reward structure as the example 8.1.
 
-    In the first phase, DynaQ+ accumulates more due to the bonus rewards.
-    DynaQ+ may have found the shortest path faster thanks to its more robust exploration strategy;
-    however there is no evidence to support this.
-    DynaQ may rely on $\epsilon$ greedy policy to explore;
-    but sometimes random exploration will result in exploring same places multiple times which may result in slows down the search for the best path.
+    In the first phase, DynaQ+ may have found the shortest path faster thanks to its more robust exploration strategy;
+
+    DynaQ may rely on $\epsilon$ greedy policy to explore.
+    Sometimes random exploration will result in exploring same places multiple times which may result in slows down the search for the best path.
 
     In the second phase, DynaQ+ has a clearer advantage, thanks to its more robust exploration strategy.
-    $\epsilon$ greedy may slowly reduce exploration in time, this may be the cause of DynaQ not able to find new shorter path.
+    DynaQ relies solely on $\epsilon$-greedy search and not able to find new shorter path fast.
+
     DynaQ+ exploration strategy may help greatly in such cases but often times it will just waste CPU times.
 
     \subsection{Question}
@@ -67,9 +67,60 @@
     Both DynaQ and DynaQ+ have reportedly found the shortest path in the first 1000 steps.
     After finding the shortest path DynaQ mostly exploits it.
     DynaQ+ on the other hand, continues exploration.
-    DynaQ+ has some bonus rewards to enjoy, but eventually longer episodes may have let the DynaQ to narrow the gap.
+    Longer episodes mean less rewards.
 
-    
+    Exploring fast is beneficial first, but it is not desirable once the environment is mostly explored.
+    Eventually longer episodes may have let the DynaQ to narrow the gap.
+
+
+    \subsection{Question}
+
+    (programming) The exploration bonus described above actually changes the estimated values of states and actions.
+    Is this necessary?
+    Suppose the bonus was used not in updates, but solely in action selection.
+    That is, suppose the action  selected was always that for which Q(St,a) + K * tau(S t , a) was maximal.
+    Carry out a gridworld experiment that tests and illustrates the strengths and weaknesses of this alternate approach.
+
+    \subsection*{Answer}
+
+    Example 8.4 configuration.
+
+    \includegraphics[scale=0.7]{example_8_4}
+
+    Example 8.5 configuration.
+
+    \includegraphics[scale=0.7]{example_8_4_2}
+
+    The alternate DynaQ+ approach shows similar behaviour to that of DynaQ+.
+
+    The alternate approach does not modify the q values.
+    While the DynaQ+ approach encourage exploration of stages and new actions, the alternate approach only encourages exploring actions.
+    Less calculation in planning phase may slightly reduce planning phase cost.
+
+    \subsection{Question}
+
+    How might the tabular Dyna-Q algorithm shown on page 164 be modified to handle stochastic environments?
+    How might this modification perform poorly on changing environments such as considered in this section?
+
+    How could the algorithm be modified to handle stochastic environments and changing environments?
+
+    \subsection*{Answer}
+
+    Deterministic algorithm keeps track of state action pairs and their q value.
+    A stochastic algorithm should also keep track the number of times an action is taken and which next state is visited.
+    Q value is formed as an expected value of possible next states and rewards.
+
+    It may be necessary to apply expected value updates in planning as well.
+
+    This approach is not suitable for changing environments.
+    New transitions only will look like rare transitions to the algorithm.
+    It will take a lot of time until new transitions gain significance.
+
+    A solution would be to give more weight to recent transitions.
+
+
+
+
 
 \end{document}
 
