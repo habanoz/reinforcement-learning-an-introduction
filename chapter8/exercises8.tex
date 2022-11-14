@@ -1,0 +1,76 @@
+%! Author = melek
+%! Date = 9.06.2022
+
+% Preamble
+\documentclass[11pt]{article}
+
+% Packages
+\usepackage{amsmath}
+\DeclareMathOperator*{\argmax}{argmax}
+
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{bm}
+
+\graphicspath{ {../images/} }
+
+
+% Document
+\begin{document}
+
+    \maketitle
+    \setcounter{section}{6}
+
+
+    \section{Exercises}
+
+    \subsection{Question}
+
+    The nonplanning method looks particularly poor in Figure 8.3 because it is a one-step method;
+    a method using multi-step bootstrapping would do better.
+    Do you think one of the multi-step bootstrapping methods from Chapter 7 could do as well as  the Dyna method?
+    Explain why or why not.
+
+    \subsection*{Answer}
+
+    n-step learning methods would do just as good as n-step planning methods.
+    n-step learning methods make better use of samples by updating multiple states.
+
+    n-step planning uses random state actions to update state values while n-step learning methods updates states leading to a reward.
+    n-step planning uses generated model to update states while n-step methods needs samples to make the updates.
+
+    \subsection{Question}
+
+    Why did the Dyna agent with exploration bonus, Dyna-Q+, perform better in the first phase as well as in the second phase of the blocking and shortcut experiments?
+
+    \subsection*{Answer}
+
+    Assuming Example 8.2 and 8.3 use the same reward structure as the example 8.1.
+
+    In the first phase, DynaQ+ accumulates more due to the bonus rewards.
+    DynaQ+ may have found the shortest path faster thanks to its more robust exploration strategy;
+    however there is no evidence to support this.
+    DynaQ may rely on $\epsilon$ greedy policy to explore;
+    but sometimes random exploration will result in exploring same places multiple times which may result in slows down the search for the best path.
+
+    In the second phase, DynaQ+ has a clearer advantage, thanks to its more robust exploration strategy.
+    $\epsilon$ greedy may slowly reduce exploration in time, this may be the cause of DynaQ not able to find new shorter path.
+    DynaQ+ exploration strategy may help greatly in such cases but often times it will just waste CPU times.
+
+    \subsection{Question}
+
+    Careful inspection of Figure 8.5 reveals that the difference between Dyna-Q+ and Dyna-Q narrowed slightly over the first part of the experiment.
+    What is the reason for this?
+
+    \subsection*{Answer}
+
+    Both DynaQ and DynaQ+ have reportedly found the shortest path in the first 1000 steps.
+    After finding the shortest path DynaQ mostly exploits it.
+    DynaQ+ on the other hand, continues exploration.
+    DynaQ+ has some bonus rewards to enjoy, but eventually longer episodes may have let the DynaQ to narrow the gap.
+
+    
+
+\end{document}
+
+
