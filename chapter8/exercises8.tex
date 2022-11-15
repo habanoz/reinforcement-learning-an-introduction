@@ -119,6 +119,45 @@
     A solution would be to give more weight to recent transitions.
 
 
+    \subsection{Question}
+
+    The analysis above assumed that all of the b possible next states were equally likely to occur.
+    Suppose instead that the distribution was highly skewed, that some of the b states were much more likely to occur than most.
+    Would this strengthen or weaken the case for sample updates over expected updates?
+    Support your answer.
+
+    \subsection*{Answer}
+
+    Highly skewed distributions strengthen the case for sample updates.
+
+    With sampling high frequency states occur frequently and value function is updated accordingly.
+    Value functions errors are reduced with very few updates.
+
+    Expected updates on the other hand will waste effort on less likely states to decrease the error a little bit.
+
+
+    \subsection{Question}
+
+    Some of the graphs in Figure 8.8 seem to be scalloped in their early portions, particularly the upper graph for b = 1 and the uniform distribution.
+    Why do you think this is?
+    What aspects of the data shown support your hypothesis?
+
+    \subsection*{Answer}
+
+    In uniform case, start state is not updated as frequently.
+    In on-policy case, the initial state is visited with a probability of 0.1 while the same probability is 1/states in uniform case.
+
+    \subsection{Question}
+    (programming) Replicate the experiment whose results are shown in the lower part of Figure 8.8, then try the same experiment but with b = 3.
+    Discuss the meaning of your results.
+
+    \subsection*{Answer}
+
+    With 10.000 states, advantage of the on-policy approach is more obvious.
+
+    When b=3, with 10.000 states, uniform approach can catch-up much later than it can do in 1000 states.
+
+    \includegraphics[scale=0.7]{exercise_8_8}
 
 
 
