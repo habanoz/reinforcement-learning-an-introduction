@@ -39,6 +39,26 @@
     Weight vector then should contain the state values.
     Product of a feature vector and weight vector produces the state value.
 
+    \subsection{Question}
+
+    Why does (9.17) define (n + 1)^k distinct features for dimension k?
+
+    \subsection*{Answer}
+
+    $s_i$ in range [1,k], k elements
+    Each $s_i$ can be written in power form $C_{i,j}$ where i is in range [0,n], n+1 elements.
+
+    We have $ (n+1)^k $ different terms.
+
+    \subsection{Question}
+
+    What n and c i,j produce the feature vectors x(s) = s 1 s 22 , s 21 s 2 , s 21 s 22 ) > ?
+
+    \subsection*{Answer}
+
+    We have 2 components, $s_1, s_2$, which implies k=2, up to the power of 2, which implies n=2.
+
+    We have total of 9 elements which is $ (n+1)^k = (2+1)^2 = 9 $
 
 \end{document}
 
