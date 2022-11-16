@@ -1,0 +1,45 @@
+%! Author = melek
+%! Date = 9.06.2022
+
+% Preamble
+\documentclass[11pt]{article}
+
+% Packages
+\usepackage{amsmath}
+\DeclareMathOperator*{\argmax}{argmax}
+
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{bm}
+
+\graphicspath{ {../images/} }
+
+
+% Document
+\begin{document}
+
+    \maketitle
+    \setcounter{section}{8}
+
+
+    \section{Exercises}
+
+    \subsection{Question}
+
+    Show that tabular methods such as presented in Part I of this book are a special case of linear function approximation.
+    What would the feature vectors be?
+
+    \subsection*{Answer}
+
+    In linear function approximation, the value function is product of feature(x) and weight(w) vectors.
+
+    \noindention $ V(s) = x(s) W(s)$
+
+    So to apply this to part 1, one may use x vector encoded as one hot in which only corresponding state is set to 1.
+    Weight vector then should contain the state values.
+    Product of a feature vector and weight vector produces the state value.
+
+
+\end{document}
+
+
