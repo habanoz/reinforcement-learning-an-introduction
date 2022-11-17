@@ -60,6 +60,54 @@
 
     We have total of 9 elements which is $ (n+1)^k = (2+1)^2 = 9 $
 
+    \subsection{Question}
+
+    Suppose we believe that one of two state dimensions is more likely to have an effect on the value function than is the other, that generalization should be primarily across this dimension rather than along it.
+    What kind of tilings could be used to take  advantage of this prior knowledge?
+
+    \subsection*{Answer}
+
+    Suspected dimension should have denser tilings.
+
+    \subsection{Question}
+
+    You make  two tilings for each pair of dimensions, making a grand total of 21 * 2 + 56 = 98 tilings.
+    Given these feature vectors, you suspect that you still have to average out some noise,so you decide that you want learning to be gradual, taking about 10 presentations with the same feature vector before learning nears its asymptote.
+    What step-size parameter should you use?
+    Why?
+
+    \subsection*{Answer}
+
+    \noinden  $ \alpha = \frac{1}{\tau E[ x^T x]} $
+
+    \noindent  $ \tau = 10 $
+
+    \noindent  we do not know probability of a feature occurring, so we assume uniform probability.
+
+    \noindent  $ E[ x^T x] = E [ \sum_{j=1}^{98} x_j^2  ] $
+
+    \noindent  $ E[ x^T x] = \sum_{j=1}^{98} E [  x_j^2  ] $
+
+    \noindent  $ E[ x^T x] = \sum_{j=1}^{98} p(x_j) x_j^2  $
+
+    \noindent  We do now the distribution thus we will assume uniform distribution.
+
+    \noindent  $ E[ x^T x] = \sum_{j=1}^{56} p(x_j) x_j^2 + 2 * \sum_{j=1}^{21} p(x_j) x_j^2  $
+
+    Each feature has a probability of occurring 8/56 in strip tilings.
+
+    \noindent  $ E[ x^T x] = \sum_{j=1}^{56} \frac{8}{56} * 1 + 2 * \sum_{j=1}^{21} p(x_j) x_j^2  $
+
+    Each feature has a probability of occurring 6/21 in conjugate tilings.
+
+    \noindent  $ E[ x^T x] = \sum_{j=1}^{56} \frac{8}{56} x_j^2 + 2 * \sum_{j=1}^{21} \frac{6}{21} * 1   $
+
+    \noindent  $ E[ x^T x] = 8 + 2 * 6 = 20  $
+
+    Eventually:
+
+    \noinden  $ \alpha = \frac{1}{10 E[ x^T x]} = \frac{1}{10 * 20} = 0.005 $
+
 \end{document}
 
 
