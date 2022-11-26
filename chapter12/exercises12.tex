@@ -247,7 +247,59 @@
     \noindent $  \alpha \sum_{t=0}^{\inf} \delta_t z_t =  \sum_{t=0}^{\inf} \Delta\hat{v}(S_t, w) (G_{t}^{\lambda} - \hat{v}(S_t, w_t)) $
 
 
+    \subsection{Question}
 
+    Several times in this book (often in exercises) we have established that returns can be written as sums of TD errors if the value function is held constant.
+    Why is (12.10) another instance of this?
+    Prove (12.10).
+
+    \subsection*{Answer}
+
+    \noindent Equation 12.9 (h replaced with t+n):
+
+    \noindent $ G_{t:t+n}^{\lambda} = (1-\lambda) \sum_{k=1}^{n-1} \lambda^{k-1} G_{t:t+k} + \lambda^{n-1} G_{t:t+n} $
+
+    \hfill \break
+    \noindent Get rid of $ (1- \lambda) $:
+
+    \noindent $ G_{t:t+n}^{\lambda} = \sum_{k=1}^{n-1} \lambda^{k-1} G_{t:t+k} - \sum_{k=1}^{n-1} \lambda^k G_{t:t+k} + \lambda^{n-1} G_{t:t+n} $
+
+    \hfill \break
+    \noindent Make the sums similar :
+
+    \noindent $ G_{t:t+n}^{\lambda} = \sum_{k=1}^{n} \lambda^{k-1} G_{t:t+k} - \sum_{k=1}^{n-1} \lambda^k G_{t:t+k} $
+
+    \noindent $ G_{t:t+n}^{\lambda} = \sum_{k=0}^{n-1} \lambda^{k} G_{t:t+k+1} - \sum_{k=1}^{n-1} \lambda^k G_{t:t+k} $
+
+    \noindent $ G_{t:t+n}^{\lambda} = \sum_{k=0}^{n-1} \lambda^{k} G_{t:t+k+1} - \sum_{k=0}^{n-1} \lambda^k G_{t:t+k} - ( - G_{t:t+0} ) $
+
+    \noindent $ G_{t:t+n}^{\lambda} = \sum_{k=0}^{n-1} \lambda^{k} G_{t:t+k+1} - \sum_{k=0}^{n-1} \lambda^k G_{t:t+k} + \hat{v}(S_t, w) $
+
+    \noindent $ G_{t:t+n}^{\lambda} = \sum_{k=0}^{n-1} \lambda^{k} [G_{t:t+k+1} - G_{t:t+k}] + \hat{v}(S_t, w) $
+
+    \hfill \break
+    \noindent The returns can be written in the form of the other.
+    One can expand both returns to show that:
+
+    \noindent $ G_{t:t+k+1} = G_{t:t+k} + \gamma^{k} R_{k+1} + \gamma^{k+1} \hat{v}(S_{k+1},w) - \gamma^{k} \hat{v}(S_{k},w)   $
+
+    \noindent $ G_{t:t+k+1} = G_{t:t+k} + \gamma^{k} ( R_{k+1} + \gamma \hat{v}(S_{k+1},w) - \hat{v}(S_{k},w)  ) $
+
+    \noindent $ G_{t:t+k+1} = G_{t:t+k} + \gamma^{k} \delta_{t+k} $
+
+    \hfill \break
+    \noindent Apply the last finding to the equation:
+
+    \noindent $ G_{t:t+n}^{\lambda} = \sum_{k=0}^{n-1} \lambda^{k} [G_{t:t+k} + \gamma^{k} \delta_{t+k} - G_{t:t+k}] + \hat{v}(S_t, w) $
+
+    \noindent $ G_{t:t+n}^{\lambda} = \sum_{k=0}^{n-1} \lambda^{k} \gamma^{k} \delta_{t+k} + \hat{v}(S_t, w) $
+
+    \hfill \break
+    \noindent Make $\delta$ indexed with i in the same way as in 12.10:
+
+    \noindent $ G_{t:t+n}^{\lambda} = \sum_{k=t}^{t+n-1} \lambda^{k-t} \gamma^{k-t} \delta_{k} + \hat{v}(S_t, w) $
+
+    \noindent $ G_{t:t+n}^{\lambda} = \sum_{i=t}^{t+n-1} \lambda^{i-t} \gamma^{i-t} \delta_{i} + \hat{v}(S_t, w) $
 
 \end{document}
 
