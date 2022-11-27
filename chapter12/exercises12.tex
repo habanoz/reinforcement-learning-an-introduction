@@ -311,6 +311,84 @@
 
     \includegraphics[scale=0.9]{exercise_12_6}
 
+    \subsection{Question}
+
+    Generalize the three recursive equations above to their truncated versions.
+
+    \subsection*{Answer}
+
+    Truncated versions of the recursive equations should be similar.
+    However, recursion conditions have to change.
+    Normally all components up to the end of episode are accumulating after fading as it is the case in figure 12.1.
+    In the truncated version, only components up to min(t+n,T) should be accumulated as it the case in figure 12.7.
+    Thus, recursive functions should terminate after returning:
+
+        $ \lambda^{\begin{cases}%
+  n-1       &   \text{if $t+n<T$}\\
+  T-t-1     &   \text{ otherwise}
+ \end{cases}} G_{t:\min(t+n,T)}^{\lambda} $
+
+    \subsection{Question}
+
+    Prove that (12.24) becomes exact if the value function does not change.
+    To save writing, consider the case of t = 0, and use the notation
+
+    \subsection*{Answer}
+
+    \noindent Equation 12.22:
+
+    \noindent $ G_{t}^{\lambda s} = \rho_{t} [ R_{t+1} \gamma_{t+1} ( (1-\lambda_{t+1}) \hat{v}_{t+1} +\lambda_{t+1}G_{t+1}^{\lambda s}) ] + (1-\rho_{t})\hat{v}_{t} $
+
+    \hfill \break
+    \noindent Start with removing the parenthesis:
+
+    \noindent $ G_{t}^{\lambda s} = \rho_{t} [ R_{t+1} \gamma_{t+1} ( \hat{v}_{t+1} - \lambda_{t+1} \hat{v}_{t+1} + \lambda_{t+1}G_{t+1}^{\lambda s}) - \hat{v}_{t} ] + \hat{v}_{t} $
+
+    \noindent $ G_{t}^{\lambda s} = \rho_{t} [ R_{t+1} + \gamma_{t+1} \hat{v}_{t+1} - \hat{v}_{t} + \gamma_{t+1} \lambda_{t+1} ( - \hat{v}_{t+1} + G_{t+1}^{\lambda s})  ] + \hat{v}_{t} $
+
+    \noindent $ G_{t}^{\lambda s} = \rho_{t} [ \delta_{t} + \gamma_{t+1} \lambda_{t+1} ( - \hat{v}_{t+1} + G_{t+1}^{\lambda s})  ] + \hat{v}_{t} $
+
+    \noindent $ G_{t}^{\lambda s} = \rho_{t} [ \delta_{t} + \gamma_{t+1} \lambda_{t+1} ( - \hat{v}_{t+1} +  \rho_{t+1} [ \delta_{t+1} + \gamma_{t+2} \lambda_{t+2} ( - \hat{v}_{t+2} + G_{t+2}^{\lambda s})  ] + \hat{v}_{t+1} )  ] + \hat{v}_{t} $
+
+    \noindent $ G_{t}^{\lambda s} = \rho_{t} [ \delta_{t} + \gamma_{t+1} \lambda_{t+1} \rho_{t+1} [ \delta_{t+1} + \gamma_{t+2} \lambda_{t+2} ( - \hat{v}_{t+2} + G_{t+2}^{\lambda s})  ]  ] + \hat{v}_{t} $
+
+    \noindent $ G_{t}^{\lambda s} = \rho_{t} [ \delta_{t} + \gamma_{t+1} \lambda_{t+1} \rho_{t+1} [ \delta_{t+1} + \gamma_{t+2} \lambda_{t+2} ( - \hat{v}_{t+2} + \rho_{t+2} [ \delta_{t+2} + \gamma_{t+3} \lambda_{t+3} ( - \hat{v}_{t+3} + G_{t+3}^{\lambda s})  ] + \hat{v}_{t+2} )  ]  ] + \hat{v}_{t} $
+
+    \noindent $ G_{t}^{\lambda s} = \rho_{t} [ \delta_{t} + \gamma_{t+1} \lambda_{t+1} \rho_{t+1} [ \delta_{t+1} + \gamma_{t+2} \lambda_{t+2} \rho_{t+2} [ \delta_{t+2} + \gamma_{t+3} \lambda_{t+3} ( - \hat{v}_{t+3} + G_{t+3}^{\lambda s})  ]  ]  ] + \hat{v}_{t} $
+
+    \hfill \break
+    \noindent Distribute the leading coefficients to see the pattern:
+
+    \noindent $ G_{t}^{\lambda s} = \rho_{t} \delta_{t} + \rho_{t} \gamma_{t+1} \lambda_{t+1} \rho_{t+1} [ \delta_{t+1} + \gamma_{t+2} \lambda_{t+2} \rho_{t+2} [ \delta_{t+2} + \gamma_{t+3} \lambda_{t+3} ( - \hat{v}_{t+3} + G_{t+3}^{\lambda s})  ]  ]  + \hat{v}_{t} $
+
+    \noindent $ G_{t}^{\lambda s} = \rho_{t} \delta_{t} + \rho_{t} \gamma_{t+1} \lambda_{t+1} \rho_{t+1} \delta_{t+1} + \rho_{t} \gamma_{t+1} \lambda_{t+1} \rho_{t+1} \gamma_{t+2} \lambda_{t+2} \rho_{t+2} [ \delta_{t+2} + \gamma_{t+3} \lambda_{t+3} ( - \hat{v}_{t+3} + G_{t+3}^{\lambda s})  ]   + \hat{v}_{t} $
+
+    \noindent $ G_{t}^{\lambda s} = \rho_{t} \delta_{t} + \rho_{t} \gamma_{t+1} \lambda_{t+1} \rho_{t+1} \delta_{t+1} + \rho_{t} \gamma_{t+1} \lambda_{t+1} \rho_{t+1} \gamma_{t+2} \lambda_{t+2} \rho_{t+2} \delta_{t+2} + \rho_{t} \gamma_{t+1} \lambda_{t+1} \rho_{t+1} \gamma_{t+2} \lambda_{t+2} \rho_{t+2} \gamma_{t+3} \lambda_{t+3} ( - \hat{v}_{t+3} + G_{t+3}^{\lambda s})   + \hat{v}_{t} $
+
+    \noindent $ G_{t}^{\lambda s} = \delta_{t} \rho_{t} + \delta_{t+1} \rho_{t} \rho_{t+1} \gamma_{t+1} \lambda_{t+1} + \delta_{t+2} \rho_{t} \rho_{t+1} \rho_{t+2} \gamma_{t+1} \gamma_{t+2} \lambda_{t+1} \lambda_{t+2} + \rho_{t} \rho_{t+1} \rho_{t+2} \gamma_{t+1} \gamma_{t+2} \gamma_{t+3} \lambda_{t+1} \lambda_{t+2} \lambda_{t+3} ( - \hat{v}_{t+3} + G_{t+3}^{\lambda s})   + \hat{v}_{t} $
+
+    \noindent $ G_{t}^{\lambda s} = \rho_{t} \sum_{k=t}^{\inf} \delta_{k} \prod_{i=t+1}^{k} \gamma_{i} \lambda_{i} \rho_{i} + \hat{v}_{t} $
+
+
+    \subsection{Question}
+
+    The truncated version of the general off-policy return is denoted G t:h .
+    Guess the correct equation, based on (12.24).
+
+    \subsection*{Answer}
+
+    \noindent The truncated version of 12.24 should sum up to h instead of infinity.
+
+    \noindent $ G_{t:h}^{\lambda s} = \rho_{t} \sum_{k=t}^{h} \delta_{k} \prod_{i=t+1}^{k} \gamma_{i} \lambda_{i} \rho_{i} + \hat{v}_{t} $
+
+    \subsection{Question}
+
+    aasdasdasd
+
+    \subsection*{Answer}
+
+    asdasdasd
+
 \end{document}
 
 
