@@ -383,11 +383,114 @@
 
     \subsection{Question}
 
-    aasdasdasd
+    Prove that (12.27) becomes exact if the value function does not change.
+    To save writing, consider the case of t = 0, and use the notation Q k = q̂(S k , A k , w).
+    Hint: Start by writing out 0 a and G 0 a , then G 0 a Q 0 .
 
     \subsection*{Answer}
 
-    asdasdasd
+    \noindent Equation 12.26:
+
+    \noindent $ G_{t}^{\lambda a} = R_{t+1} + \gamma_{t+1} (\bar{V}_{t}(S_{t+1}) + \lambda_{t+1} \rho_{t+1} [ G_{t+1}^{\lambda a} -\hat{q}(S_{t+1},A_{t+1}, w_{t})] ) $
+
+    \hfill \break
+    \noindent Equation 12.28:
+
+    \noindent $ \delta_{t}^{a} = R_{t+1} + \gamma_{t+1} \bar{V}_t(S_{t+1}) - \hat{q}(S_{t},A_{t}, w_{t}) ] $
+
+    \hfill \break
+    \noindent Following the hints:
+
+    \noindent $ \delta_{0}^{a} = R_{1} + \gamma_{1} \bar{V}(S_{1}) - Q_{0} $
+
+    \noindent $ G_{0}^{\lambda a} = R_{1} + \gamma_{1} (\bar{V}(S_{1}) + \lambda_{1} \rho_{1} [ G_{1}^{\lambda a} -Q_{1}] ) $
+
+    \noindent $  G_{0}^{\lambda a} - Q_{0} = R_{1} + \gamma_{1} (\bar{V}(S_{1}) + \lambda_{1} \rho_{1} [ G_{1}^{\lambda a} -Q_{1}] ) -  Q_{0} $
+
+    \noindent $  G_{0}^{\lambda a} - Q_{0} =  \delta_{0}^{a} + \gamma_{1} \lambda_{1} \rho_{1} [ G_{1}^{\lambda a} -Q_{1}] $
+
+    \noindent $  G_{0}^{\lambda a} - Q_{0} =  \delta_{0}^{a} + \gamma_{1} \lambda_{1} \rho_{1} [   \delta_{1}^{a} + \gamma_{2} \lambda_{2} \rho_{2} [ G_{2}^{\lambda a} -Q_{2}]   ] $
+
+    \hfill \break
+    \noindent The pattern is visible:
+
+    \noindent $  G_{0}^{\lambda a} - Q_{0} =  \sum_{k=0}^{\inf} \delta_{k}^{a} \prod_{i=t+1}^{k} \gamma_{i} \lambda_{i} \rho_{i} $
+
+    \noindent $  G_{t}^{\lambda a} - Q_{t} =  \sum_{k=t}^{\inf} \delta_{k}^{a} \prod_{i=t+1}^{k} \gamma_{i} \lambda_{i} \rho_{i} $
+
+    \noindent $  G_{t}^{\lambda a}  =   Q_{t} + \sum_{k=t}^{\inf} \delta_{k}^{a} \prod_{i=t+1}^{k} \gamma_{i} \lambda_{i} \rho_{i} $
+
+
+    \subsection{Question}
+
+    The truncated version of the general off-policy return is denoted G t:h.
+    Guess the correct equation for it, based on (12.27).
+
+    \subsection*{Answer}
+
+    \noindent $  G_{t:h}^{\lambda a}  =   Q_{t} + \sum_{k=t}^{h} \delta_{k}^{a} \prod_{i=t+1}^{k} \gamma_{i} \lambda_{i} \rho_{i} $
+
+
+    \subsection{Question}
+
+    Show in detail the steps outlined above for deriving (12.29) from (12.27).
+    Start with the update (12.15), substitute $G_{t}^{\lambda a}$ a from (12.26) for $G_{t}^{\lambda}$ , then follow similar steps as led to (12.25).
+
+    \subsection*{Answer}
+
+    \noindent Equation 12.27:
+
+    \noindent $  G_{t}^{\lambda a}  =   Q_{t} + \sum_{k=t}^{\inf} \delta_{k}^{a} \prod_{i=t+1}^{k} \gamma_{i} \lambda_{i} \rho_{i} $
+
+    \hfill \break
+    \noindent Following the hints:
+
+    \noindent $ w_{t+1} = w_{t} + \alpha [ G_{t}^{\lambda} - Q_{t}] \Delta Q_{t} $ t=0,1,\ldots,T-1 Equation 12.15
+
+    \noindent $ w_{t+1} = w_{t} + \alpha [ G_{t}^{\lambda a} - Q_{t}] \Delta Q_{t} $ t=0,1,\ldots,T-1 Equation 12.15
+
+    \noindent $ w_{t+1} = w_{t} + \alpha [Q_{t} + \sum_{k=t}^{\inf} \delta_{k}^{a} \prod_{i=t+1}^{k} \gamma_{i} \lambda_{i} \rho_{i} - Q_{t}] \Delta Q_{t} $ t=0,1,\ldots,T-1 Equation 12.15
+
+    \noindent $ w_{t+1} = w_{t} + \alpha [\sum_{k=t}^{\inf} \delta_{k}^{a} \prod_{i=t+1}^{k} \gamma_{i} \lambda_{i} \rho_{i}] \Delta Q_{t} $ t=0,1,\ldots,T-1 Equation 12.15
+
+    \hfill \break
+    \noindent The sum of the forward-view update over time is:
+
+    \noindent $ \sum_{t=1}^{\infty} (w_{t+1} - w_t) = \sum_{t=1}^{\infty} \sum_{k=t}^{\infty} \alpha  \delta_{k}^{a} \Delta Q_{t} \prod_{i=t+1}^{k} \gamma_{i} \lambda_{i} \rho_{i}  $
+
+    \noindent $ \sum_{t=1}^{\infty} (w_{t+1} - w_t) = \sum_{k=1}^{\infty} \sum_{t=1}^{k} \alpha  \delta_{k}^{a} \Delta Q_{t} \prod_{i=t+1}^{k} \gamma_{i} \lambda_{i} \rho_{i}  $ by summation rule $ \sum_{t=x}^{y} \sum_{k=t}^{y} = \sum_{k=x}^{y} \sum_{t=x}^{k}  $
+
+    \noindent $ \sum_{t=1}^{\infty} (w_{t+1} - w_t) = \sum_{k=1}^{\infty} \alpha  \delta_{k}^{a} \sum_{t=1}^{k} \Delta Q_{t} \prod_{i=t+1}^{k} \gamma_{i} \lambda_{i} \rho_{i}  $
+
+    \noindent $ z_k = \sum_{t=1}^{k} \Delta Q_{t} \prod_{i=t+1}^{k} \gamma_{i} \lambda_{i} \rho_{i}  $
+
+    \noindent $ z_k = \sum_{t=1}^{k-1} \Delta Q_{t} \prod_{i=t+1}^{k} \gamma_{i} \lambda_{i} \rho_{i} + \Delta Q_{k} $
+
+    \noindent $ z_k = \gamma_{k} \lambda_{k} \rho_{k} [ \sum_{t=1}^{k-1} \Delta Q_{t} \prod_{i=t+1}^{k-1} \gamma_{i} \lambda_{i} \rho_{i} ] + \Delta Q_{k} $
+
+    \noindent $ z_k = \gamma_{k} \lambda_{k} \rho_{k} z_{k-1} + \Delta Q_{k} $
+
+    \noindent $ z_t = \gamma_{t} \lambda_{t} \rho_{t} z_{t-1} + \Delta Q_{t} $
+
+    \subsection{Question}
+
+    What are the dutch-trace and replacing-trace versions of off-policy eligibility traces for state-value and action-value methods?
+
+    \subsection*{Answer}
+
+    \noindent My dutch-trace guesses are:
+
+    \noindent $ z_t = \rho_{t} (\gamma_{t} \lambda_{t} z_{t-1} + (1-\alpha \gamma_t \lambda_t z_{t-1} x_t)x_t ) $
+
+    \noindent $ z_t = \gamma_{t} \lambda_{t} \rho_{t} z_{t-1} + (1-\alpha \gamma_t \lambda_t z_{t-1} \rho_{t} x_t)x_t $
+
+    \hfill \break
+    \noindent My replacing-trace guesses are (the replacing traces are defined for binary features):
+
+    \noindent $ z_{t,i} = \rho_{t} (\gamma_{t} \lambda_{t} z_{t-1} (1- x_{t,i}) + x_{t,i} ) $
+
+    \noindent $ z_{t,i} = \gamma_{t} \lambda_{t} \rho_{t} z_{t-1} (1- x_{t,i}) + \rho_{t} x_{t,i} $
+
 
 \end{document}
 
