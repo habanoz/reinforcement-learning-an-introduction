@@ -491,6 +491,52 @@
 
     \noindent $ z_{t,i} = \gamma_{t} \lambda_{t} \rho_{t} z_{t-1} (1- x_{t,i}) + \rho_{t} x_{t,i} $
 
+    \subsection{Question}
+
+    What are the dutch-trace and replacing-trace versions of off-policy eligibility traces for state-value and action-value methods?
+
+    \subsection*{Answer}
+
+    \noindent Semi gradient parameter update rule (12.7)
+
+    \noindent $ w_{t+1} = w_{t} + \alpha \delta_{t} z_{t} $
+
+    \hfill \break
+    \noindent Dutch trace (12.11):
+
+    \noindent $ z_t = \lambda \gamma z_{t-1} + (1-\alpha \gamma \lambda z_{t-1}^{T} x_t) x_t $
+
+    \hfill \break
+    \noindent Expectation based TD error (12.28)
+
+    \noindent $ \delta_{t}^{a} = R_{t+1} + \gamma_{t+1} \bar{V}_{t}(S_{t+1}) - \hat{q}(S_t,A_t,w_t) $
+
+
+    \hfill \break
+    \noindent Expectation approximate value function (12.21)
+
+    \noindent $ \bar{V}_{t}(s) = \sum_{a} \pi(a|s)\hat{q}(s,a,w)  $
+
+
+    \hfill \break
+    \noindent Slightly modify 12.21:
+
+    \noindent $ \bar{V}_{k, t}(s) = \sum_{a} \pi_{k}(a|s)\hat{q}(s,a,w_{k})  $
+
+    \hfill \break
+    \noindent In double expected SARSA there will be two policy to select actions $\pi_1$ and $\pi_2$  with their respective action value functions $Q_1$ and $Q_2$. (From exercise 6.12)
+
+    \noindent $ Q_1(S_t, A_t) =  Q_1(S_t, A_t) + \alpha [ R_{t+1} + \gamma E_{\pi_2} [ Q_2(S_{t+1}, A_{t+1}) | S_{t+1}] - Q_1(S_t, A_t) ] $
+
+    \noindent $ Q_2(S_t, A_t) =  Q_2(S_t, A_t) + \alpha [ R_{t+1} + \gamma E_{\pi_1} [ Q_1(S_{t+1}, A_{t+1}) | S_{t+1}] - Q_2(S_t, A_t) ] $
+
+    \hfill \break
+    \noindent After combining all the available data, the update rules should look like:
+
+    \noindent $ w_{1, t+1} = w_{1, t} + \alpha (R_{t+1} + \gamma_{t+1} \bar{V}_{2, t}(S_{t+1}) - \hat{q}(S_t,A_t,w_{1,t}))  z_{t} $
+
+    \noindent $ w_{2, t+1} = w_{2, t} + \alpha (R_{t+1} + \gamma_{t+1} \bar{V}_{1, t}(S_{t+1}) - \hat{q}(S_t,A_t,w_{2,t}))  z_{t} $
+
 
 \end{document}
 
