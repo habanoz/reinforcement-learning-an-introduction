@@ -1,0 +1,73 @@
+%! Author = melek
+%! Date = 9.06.2022
+
+% Preamble
+\documentclass[11pt]{article}
+
+% Packages
+\usepackage{amsmath}
+\DeclareMathOperator*{\argmax}{argmax}
+
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{bm}
+
+\graphicspath{ {../images/} }
+
+
+% Document
+\begin{document}
+
+    \maketitle
+    \setcounter{section}{12}
+
+    \section{Exercises}
+
+    \subsection{Question}
+
+    Use your knowledge of the gridworld and its dynamics to determine an exact symbolic expression for the optimal probability of selecting the right action in Example 13.1.
+
+    \subsection*{Answer}
+
+    \noindent By equation 13.2, probability selecting right action:
+
+    \noindent $ \pi( a | s, \theta) = \frac{e^{h(s,a,\theta)}}{\sum_{b} e^{h(s,b,\theta)}} $
+
+    \noindent $ \pi( right | s, \theta) = \frac{e^{h(s,right,\theta)}}{e^{h(s,right,\theta)} + e^{h(s,left,\theta)}} $
+
+    \hfill \break
+    \noindent Incorporating 13.3 and feature vectors:
+
+    \noindent $ \pi( right | s, \theta) = \frac{e^{\theta^{T}[1,0]}}{e^{{\theta^{T}[1,0]}} + e^{\theta^{T}[0,1]}} = \frac{e^{\theta_{1}}}{e^{{\theta_{1}}} + e^{\theta_{2}}} $
+
+    \hfill \break
+    \noindent From example 3.1 we know that probability of selecting right action is 0.59 then one probable parameter vector can be $ \theta = [-0.53, -0.89] $:
+
+    \subsection{Question}
+
+    Generalize the box on page 199, the policy gradient theorem (13.5), the proof of the policy gradient theorem (page 325), and the steps leading to the REINFORCE update equation (13.8), so that (13.8) ends up with a factor of $ \gamma^t $ and thus aligns with the general algorithm given in the pseudocode.
+
+    \subsection*{Answer}
+
+    \noindent The text states in the boxed page 199: If there is discounting ( $\gamma < 1 $) it should be treated as a form of termination, which can be done simply by including a factor of $\gamma$ in the second term of 9.2.
+
+    \noindent Equation 9.2 with discounting:
+
+    \noindent $ \eta(s) = h(s) + \gamma \sum_{\bar{s}} \eta(\bar{s}) \sum_{a} \pi(a|\bar{s}) p(s| \bar{s},a)  $
+
+    \hfill \break
+    \noindent Proof of policy gradient theorem changes in the way $ \nabla v_{\pi}(s_0) $ is expanded:
+
+    \noindent $ \nabla J(\theta) = \nabla V_{\pi}(s_{0})  $
+
+    \noindent $ \nabla J(\theta) = \sum_{s} ( \sum_{k=0}^{\infty} \gamma^{k} \Pr(s_0 \rightarrow s, k, \pi )  ) \sum_{a} \nabla \pi(a|s) q_\pi (s,a) $
+
+    \hfill \break
+    \noindent I cannot show how $ \gamma^k $ is handled from here on.
+    At the end the REINFORCE update 13.8 becomes:
+
+    \noindent $ \theta_{t+1} = \theta{t} + \alpha \gamma^t G_{t} \frac{\nabla\pi(A_t | S_t , \theta_t)}{\pi(A_t | S_t , \theta_t)} $
+
+\end{document}
+
+
