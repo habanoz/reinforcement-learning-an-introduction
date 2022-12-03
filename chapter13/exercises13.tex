@@ -68,6 +68,128 @@
 
     \noindent $ \theta_{t+1} = \theta{t} + \alpha \gamma^t G_{t} \frac{\nabla\pi(A_t | S_t , \theta_t)}{\pi(A_t | S_t , \theta_t)} $
 
+    \hfill \break
+    \noindent Alternative solution may be found in UCL leacture series.
+
+     \includegraphics[scale=0.3]{exercise_13_3}
+
+    \newpage
+    \subsection{Question}
+
+    In Section 13.1 we considered policy parameterizations using the soft-max in action preferences (13.2) with linear action preferences (13.3).
+    For this parameterization,prove that the eligibility vector is:
+
+    \hfill \break
+    \noindent $ \nabla \ln \pi(a|s,\theta) = x(s,a) - \sum_{b} \pi(b|s,\theta) x(s,b)  $ \hfill (13.9)
+
+    \hfill \break
+    \noindent using the definitions and elementary calculus.
+
+    \subsection*{Answer}
+
+    \noindent Equation 13.2 is:
+
+    \noindent $ \pi(a|s,\theta) = \frac{e^{h(s,a,\theta)}}{\sum_{b} e^{h(s,b,\theta)}} $
+
+    \hfill \break
+    \noindent Equation 13.3 is:
+
+    \noindent $ h(s,a,\theta) = \theta^T x(s,a) $
+
+    \hfill \break
+    \noindent Let's start with 13.2 taking logarithm of both sides :
+
+     \noindent $ \ln \pi(a|s,\theta) = \ln \frac{e^{h(s,a,\theta)}}{\sum_{b} e^{h(s,b,\theta)}} $
+
+    \noindent $ \ln \pi(a|s,\theta) =  \ln  e^{h(s,a,\theta)} - \ln \sum_{b} e^{h(s,b,\theta)} $
+
+    \noindent $ \ln \pi(a|s,\theta) =  h(s,a,\theta)  - \ln \sum_{b} e^{h(s,b,\theta)} $
+
+     \hfill \break
+    \noindent Now take derivative both sides :
+
+     \noindent $ \nabla \ln \pi(a|s,\theta) =  \nabla h(s,a,\theta)  - \nabla  \ln \sum_{b} e^{h(s,b,\theta)} $
+
+    \noindent $ \nabla \ln \pi(a|s,\theta) =  \nabla h(s,a,\theta)  -  \frac{\nabla  \sum_{b} e^{h(s,b,\theta)}}{\sum_{b} e^{h(s,b,\theta)}}  $
+
+    \noindent $ \nabla \ln \pi(a|s,\theta) =  \nabla h(s,a,\theta)  -  \frac{  \sum_{b} \nabla e^{h(s,b,\theta)}}{\sum_{b} e^{h(s,b,\theta)}}  $
+
+    \noindent $ \nabla \ln \pi(a|s,\theta) =  \nabla h(s,a,\theta)  -  \frac{  \sum_{b} \nabla h(s,b,\theta) e^{h(s,b,\theta)}}{\sum_{b} e^{h(s,b,\theta)}}  $
+
+    \noindent $ \nabla \ln \pi(a|s,\theta) =  \nabla h(s,a,\theta)  -  \sum_{b} \nabla h(s,b,\theta) \pi(b|s,\theta)  $ from equation 13.2
+
+    \noindent $ \nabla \ln \pi(a|s,\theta) =  x(s,a)  -  \sum_{b} x(s,b) \pi(b|s,\theta)  $ from equation 13.3
+
+
+    \subsection{Question}
+
+    Show that for the gaussian policy parameterization (13.19) the eligibility vector has the following two parts:
+
+    \subsection*{Answer}
+
+    \noindent Relevant equations are:
+
+    \noindent $ \mu(s,\theta) = \theta_\mu x_\mu(s) $
+
+    \noindent $ \sigma(s,\theta) = e^{\theta_{\sigma}^T x_\sigma(s)} $
+
+    \hfill \break
+    \noindent Taking logarithm of the policy function:
+
+    \noindent $ \ln \pi(a|s,\theta) = \ln \frac{e^{- \frac{(a-\mu(s,\theta))^2}{2\sigma(s, \theta)^2}}}{\sigma(s,\theta)\sqrt{2\pi}}$
+
+    \noindent $ \ln \pi(a|s,\theta) = \ln e^{- \frac{(a-\mu(s,\theta))^2}{2\sigma(s, \theta)^2}} -  \ln \sigma(s,\theta)\sqrt{2\pi}$
+
+    \noindent $ \ln \pi(a|s,\theta) = - \frac{(a-\mu(s,\theta))^2}{2\sigma(s, \theta)^2} -  \ln \sigma(s,\theta) -  \ln \sqrt{2\pi}$
+
+    \noindent $ \ln \pi(a|s,\theta) = - \frac{(a-\mu(s,\theta_\mu))^2}{2\sigma(s, \theta_\sigma)^2} -  \ln \sigma(s,\theta_\sigma) -  \ln \sqrt{2\pi}$  \hfill (1)
+
+    \hfill \break
+    \noindent Using (1) and taking derivative wrt. $ \theta_{\mu} $
+
+    \noindent $ \nabla \theta_\mu \ln \pi(a|s,\theta_\mu) = - \nabla \frac{(a-\mu(s,\theta))^2}{2\sigma(s, \theta)^2} = -\frac{1}{{2\sigma(s, \theta)^2}} \nabla (a-\mu(s,\theta))^2$
+    \noindent $ \nabla \theta_\mu \ln \pi(a|s,\theta_\mu) = -\frac{1}{{2\sigma(s, \theta)^2}} 2 (a-\mu(s,\theta)) (-x_\mu(s))$
+    \noindent $ \nabla \theta_\mu \ln \pi(a|s,\theta_\mu) = \frac{1}{{\sigma(s, \theta)^2}} (a-\mu(s,\theta)) x_\mu(s)$
+
+    \hfill \break
+    \noindent Using (1) and taking derivative wrt. $ \theta_{\sigma} $
+
+    \noindent $ \nabla \theta_\sigma  \ln \pi(a|s,\theta_\mu) = \nabla  - \frac{(a-\mu(s,\theta_\mu))^2}{2\sigma(s, \theta)^2} - \nabla  \ln \sigma(s,\theta)$
+
+    \noindent $ \nabla \theta_\sigma  \ln \pi(a|s,\theta_\mu) = -(a-\mu(s,\theta_\mu))^2 \nabla \frac{1}{2\sigma(s, \theta)^2} - \nabla  \ln \sigma(s,\theta)$
+
+    \noindent $ \nabla \theta_\sigma  \ln \pi(a|s,\theta_\mu) = -(a-\mu(s,\theta_\mu))^2  \frac{- 4\sigma(s, \theta) \sigma(s, \theta) x_\sigma(s) }{4\sigma(s, \theta)^4} - x_\sigma(s)$
+
+    \noindent $ \nabla \theta_\sigma  \ln \pi(a|s,\theta_\mu) = (a-\mu(s,\theta_\mu))^2  \frac{x_\sigma(s) }{\sigma(s, \theta)^2} - x_\sigma(s)$
+
+    \noindent $ \nabla \theta_\sigma  \ln \pi(a|s,\theta_\mu) = (\frac{(a-\mu(s,\theta_\mu))^2 }{\sigma(s, \theta)^2} - 1) x_\sigma(s)  $
+
+
+    \subsection{Question}
+
+    \includegraphics[scale=0.9]{exercise_13_5q}
+
+    \subsection*{Answer}
+
+    \subsubsection*{a}
+
+    \noindent $ \pi(s, 1, \theta) = \frac{e^{h(s,1, \theta)}}{e^{h(s,1, \theta)} + e^{h(s,0, \theta)}} $
+
+    \noindent $ \pi(s, 1, \theta) = \frac{e^{h(s,1, \theta)}}{e^{h(s,1, \theta)} + e^{h(s,1, \theta)-\theta x(s)}} $
+
+    \noindent $ \pi(s, 1, \theta) = \frac{1}{1 + e^{-\theta x(s)}} $
+
+
+    \subsubsection*{b}
+
+    \noindent $ \theta_{t+1} = \theta_t + \alpha G_t \nabla \ln \pi(A_t | S_t, \theta_t) $ \hfill From equation 13.8
+
+    \subsubsection*{c}
+
+
+
+
+
 \end{document}
 
 
