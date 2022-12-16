@@ -66,10 +66,6 @@ def value_iteration(file_name='figure_4_3.png'):
         # https://github.com/ShangtongZhang/reinforcement-learning-an-introduction/blob/master/chapter04/gamblers_problem.py
         pi[s] = actions[np.argmax(np.round(action_returns[1:], 5)) + 1]
 
-    #np.savetxt("v.txt", V)
-    #np.savetxt("pi.txt", pi)
-
-
     plt.figure(figsize=(10, 20))
 
     plt.subplot(2, 1, 1)

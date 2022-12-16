@@ -1,5 +1,4 @@
 # copyright huseyinabanox@gmail.com
-# https://github.com/ShangtongZhang/reinforcement-learning-an-introduction/blob/master/chapter04/car_rental.py is used to make sure the solution is correct.
 
 import time
 import numpy as np
@@ -188,12 +187,9 @@ def policy_iteration(file_name='figure_4_2.png'):
 
         print("Policy iteration {} completed".format(iteration))
 
-    # np.savetxt("v.txt", V)
-    # np.savetxt("pi.txt", pi)
-
     plot_value_function(V, axes)
 
-    plt.savefig('../images/'+file_name)
+    plt.savefig('../images/' + file_name)
     plt.close()
 
 
@@ -212,8 +208,10 @@ def plot_policy(axes, iteration, pi):
     fig.set_xlabel('# cars at second location', fontsize=30)
     fig.set_title('policy {}'.format(iteration), fontsize=30)
 
+
 def solve_jacks_car_rental():
     policy_iteration()
+
 
 def solve_jacks_car_rental_e_4_7():
     global FREE_CARS_MOVE_TO_LOC2
@@ -221,6 +219,7 @@ def solve_jacks_car_rental_e_4_7():
     global CAR_PARK_COST
     CAR_PARK_COST = 4
     policy_iteration(file_name='figure_4_2_e_4_7.png')
+
 
 if __name__ == '__main__':
     # solve_jacks_car_rental()
