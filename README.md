@@ -6,6 +6,7 @@ Solutions are for personnel reference. No guarantee of correctness is provided.
 
 Corrections are welcome...
 
+I also created  [rl-algo](https://github.com/habanoz/rl-algo) repository for RL Control algorithm implementations.
 
 ## Acknowledgements
 
