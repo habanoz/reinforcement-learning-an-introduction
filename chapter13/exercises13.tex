@@ -179,15 +179,55 @@
 
     \noindent $ \pi(s, 1, \theta) = \frac{1}{1 + e^{-\theta x(s)}} $
 
-
     \subsubsection*{b}
 
     \noindent $ \theta_{t+1} = \theta_t + \alpha G_t \nabla \ln \pi(A_t | S_t, \theta_t) $ \hfill From equation 13.8
 
     \subsubsection*{c}
 
+    I am not sure about the result.
+    I followed the steps hoping to reach a reasonable result.
+    The result I found seems be reasonable but it does not include the x(s) term.
 
+    \hfill \break
+    \noindent Separately for each action computing the derivative of the logarithm with respect to P
 
+    \hfill \break
+    \noindent $  \pi(1 | S_t, \theta_t) = P_t$
+
+    \noindent $  \ln \pi(1 | S_t, \theta_t) = \ln P_t$
+
+    \noindent $  \nabla \ln \pi(1 | S_t, \theta_t) = \frac{P_t^'}{P_t} = \frac{P_t (1-P_t)}{P_t} = 1-P_t  $
+
+    \hfill \break
+    \noindent $  \pi(0 | S_t, \theta_t) = 1- P_t$
+
+    \noindent $  \ln \pi(0 | S_t, \theta_t) = \ln (1- P_t)$
+
+    \noindent $  \nabla \ln \pi(0 | S_t, \theta_t) = \frac{P_t^'}{1-P_t} = \frac{P_t (1-P_t)}{1-P_t} = P_t  $
+
+    \hfill \break
+    \noindent Combining both results into one expressing that depends on a and P
+
+    \noindent $  \nabla \ln \pi(a | S_t, \theta_t) = a \nabla \ln \pi(1 | S_t, \theta_t) + (1-a) \nabla \ln \pi(0 | S_t, \theta_t)  $
+
+    \noindent $  \nabla \ln \pi(a | S_t, \theta_t) = a (1- P_t) + (1-a) P_t  $
+
+    \hfill \break
+    \noindent Now replacing with P with $\pi$ and rearranging:
+
+    \noindent $  \nabla \ln \pi(a | S_t, \theta_t) = a \pi(0 | S_t, \theta_t) + (1-a) \pi(1 | S_t, \theta_t)  $
+
+    \noindent $  \nabla \ln \pi(a | S_t, \theta_t) = a (1 - \pi(1 | S_t, \theta_t)) + (1-a) (1- \pi(0 | S_t, \theta_t))  $
+
+    \hfill \break
+    \noindent The first part is non-zero only when a is 1.
+    The second part is only non-zero only when a is 0.
+    Thus we can replace selected actions with a:
+
+    \noindent $  \nabla \ln \pi(a | S_t, \theta_t) = a (1 - \pi(a | S_t, \theta_t)) + (1-a) (1- \pi(a | S_t, \theta_t))  $
+
+    \noindent $  \nabla \ln \pi(a | S_t, \theta_t) = 1- \pi(a | S_t, \theta_t) $
 
 
 \end{document}
