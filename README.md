@@ -10,7 +10,7 @@ I also created  [rl-algo](https://github.com/habanoz/rl-algo) repository for RL 
 
 ## Solutions
 
-* [Chapter 2](chapter2/exercies2.pdf)
+* [Chapter 2](chapter2/exercises2.pdf)
 
 
 
