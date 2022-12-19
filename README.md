@@ -26,7 +26,7 @@ I also created  [rl-algo](https://github.com/habanoz/rl-algo) repository for RL 
 
 ## Acknowledgements
 
-All solutions belongs to me. 
+All solutions belong to me. 
 
 I need to credit the following authors.
 
