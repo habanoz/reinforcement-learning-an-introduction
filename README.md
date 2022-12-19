@@ -11,18 +11,17 @@ I also created  [rl-algo](https://github.com/habanoz/rl-algo) repository for RL 
 ## Solutions
 
 * [Chapter 2](chapter2/exercises2.pdf)
-* [Chapter 3](chapter2/exercises3.pdf)
-* [Chapter 4](chapter2/exercises4.pdf)
-* [Chapter 5](chapter2/exercises5.pdf)
-* [Chapter 6](chapter2/exercises6.pdf)
-* [Chapter 7](chapter2/exercises7.pdf)
-* [Chapter 8](chapter2/exercises8.pdf)
-* [Chapter 9](chapter2/exercises9.pdf)
-* [Chapter 10](chapter2/exercises10.pdf)
-* [Chapter 11](chapter2/exercises11.pdf)
-* [Chapter 12](chapter2/exercises12.pdf)
-* [Chapter 13](chapter2/exercises13.pdf)
-
+* [Chapter 3](chapter3/exercises3.pdf)
+* [Chapter 4](chapter4/exercises4.pdf)
+* [Chapter 5](chapter5/exercises5.pdf)
+* [Chapter 6](chapter6/exercises6.pdf)
+* [Chapter 7](chapter7/exercises7.pdf)
+* [Chapter 8](chapter8/exercises8.pdf)
+* [Chapter 9](chapter9/exercises9.pdf)
+* [Chapter 10](chapter10/exercises10.pdf)
+* [Chapter 11](chapter11/exercises11.pdf)
+* [Chapter 12](chapter12/exercises12.pdf)
+* [Chapter 13](chapter13/exercises13.pdf)
 
 
 ## Acknowledgements
