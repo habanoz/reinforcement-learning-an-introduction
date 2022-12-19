@@ -11,7 +11,7 @@
 import matplotlib
 import numpy as np
 
-from chapter8.maze_world import MazeWorld
+from chapter08.maze_world import MazeWorld
 
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt

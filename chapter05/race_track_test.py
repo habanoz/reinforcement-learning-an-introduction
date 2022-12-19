@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from chapter5.race_track import Env, CELL_START_LINE
+from chapter05.race_track import Env, CELL_START_LINE
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pickle
