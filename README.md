@@ -8,6 +8,12 @@ Corrections are welcome...
 
 I also created  [rl-algo](https://github.com/habanoz/rl-algo) repository for RL Control algorithm implementations.
 
+## Solutions
+
+* [Chapter 2](chapter2/exercies2.pdf)
+
+
+
 ## Acknowledgements
 
 All solutions belongs to me. 
