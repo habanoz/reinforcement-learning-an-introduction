@@ -23,6 +23,11 @@ I also created  [rl-algo](https://github.com/habanoz/rl-algo) repository for RL 
 * [Chapter 12](chapter12/exercises12.pdf)
 * [Chapter 13](chapter13/exercises13.pdf)
 
+## More On RL
+
+If you are interested in **Deep RL**, check out the Berkeley YouTube Deep RL course by Sergey Levine. The course is a precious resource. You can also refer to my solutions to the course assignments at [Berkeley RL Homework Answers](https://github.com/habanoz/berkeley_rl_hw_answers).
+
+If you are interested in **Meta-RL**, check out the Standford YouTube Meta Learning course by Chealse Finn. The course is a precious resource. You can also refer to my solutions to the course assignments at [Standford Meta Learning Homework Answers](https://github.com/habanoz/cs330-2021-stanford-meta-learning-hw-answers).
 
 ## Acknowledgements
 
